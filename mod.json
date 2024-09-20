@@ -10,5 +10,12 @@
 	"name": "Look I Did It",
 	"version": "v1.0.0",
 	"developer": "LimeGradient",
-	"description": "Share your level completions with one click!"
+	"description": "Share your level completions with one click!",
+	"dependencies": [
+		{
+			"id": "geode.node-ids",
+			"version": ">=1.14.0",
+			"importance": "required"
+		}
+	]
 }
