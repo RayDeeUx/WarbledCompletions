@@ -4,10 +4,11 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_OSX_ARCHITECTURES "arm64;x86_64")
 set(CMAKE_CXX_VISIBILITY_PRESET hidden)
 
-project(LookIDidIt VERSION 1.0.0)
+project(TweetYourCompletions VERSION 1.0.0)
 
 file(GLOB_RECURSE SOURCES
-    src/*.cpp src/*.hpp
+    src/*.cpp
+    src/*.hpp
 )
 
 include_directories(src)
@@ -21,5 +22,15 @@ else()
 endif()
 
 add_subdirectory($ENV{GEODE_SDK} ${CMAKE_CURRENT_BINARY_DIR}/geode)
+add_subdirectory(clip)
 
 setup_geode_mod(${PROJECT_NAME})
+
+# Disable clip examples and tests
+set(CLIP_EXAMPLES OFF CACHE BOOL "Compile clip examples")
+set(CLIP_TESTS OFF CACHE BOOL "Compile clip tests")
+
+# In case that you have ${PNG_LIBRARY} set to support copy/paste images on Linux
+#set(CLIP_X11_PNG_LIBRARY "${PNG_LIBRARY}")
+
+target_link_libraries(TweetYourCompletions clip)

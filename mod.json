@@ -1,21 +1,55 @@
 {
-	"geode": "3.7.1",
+	"geode": "3.4.0",
 	"gd": {
 		"win": "2.206",
-		"android": "2.206",
 		"mac": "2.206",
-		"ios": "2.206"
+		"android": "2.206"
 	},
-	"id": "limegradient.lookididit",
-	"name": "Look I Did It",
+	"id": "raydeeux_limegradient.tweetyourcompletions",
+	"name": "TweetYourCompletions",
 	"version": "v1.0.0",
-	"developer": "LimeGradient",
+	"developers": ["RayDeeUx", "LimeGradient"],
 	"description": "Share your level completions with one click!",
+	"repository": "https://github.com/RayDeeUx/TweetYourCompletions",
+	"settings": {
+		"enabled": {
+			"name": "Enabled",
+			"description": "Toggles the mod.",
+			"type": "bool",
+			"default": true
+		},
+		"twitter": {
+			"name": "Share to Twitter",
+			"description": "Enable sharing your completion to <cj>Twitter</c>.",
+			"type": "bool",
+			"default": true
+		},
+		"reddit": {
+			"name": "Share to r/GeometryDash",
+			"description": "Enable sharing your completion to <co>r/geometrydash</c>.\n\n<cy>This setting is designed to be as compliant to</c> <co>r/geometrydash's Rule 3</c> <cy>as possible;</c> <co>Reddit</c> <cy>is not an option when completing RobTop's levels.</c> <cr>Video and/or screenshot evidence of your completion is still mandatory per r/geometrydash rules!</c>",
+			"type": "bool",
+			"default": true
+		},
+		"useSHReddit": {
+			"name": "Use sh.reddit.com",
+			"description": "Disabling this setting will share your completions through <co>new.reddit.com</c> instead of <co>sh.reddit.com</c>.\n\n<cy>This setting is available for those who are allergic to</c> <co>Reddit</c><cy>'s most recent iteration of UI design. By disabling this, you will be gently reminded to switch the type of your post to</c> <cl>\"Images & Video\"</c> <cy>to best comply with</c> <co>r/geometrydash</c><cy>'s rules.</c>",
+			"type": "bool",
+			"default": true
+		}
+	},
 	"dependencies": [
 		{
 			"id": "geode.node-ids",
 			"version": ">=1.14.0",
 			"importance": "required"
 		}
-	]
+	],
+	"issues": {
+		"url": "https://discord.com/channels/911701438269386882/1205523212444639292",
+		"info": "Ping me <cl>(@erymanthus)</c> in the Geode SDK Discord server's <cl>#help</c> channel if you need help. <cr>DMs are NOT accepted.</c>"
+	},
+	"links": {
+		"community": "https://discord.gg/WqZBYdBWZW",
+		"homepage": "https://discord.com/channels/822510988409831486/1206371881222144020"
+	}
 }
