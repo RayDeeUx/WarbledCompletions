@@ -93,14 +93,14 @@ class $modify(SharingEndLevelLayer, EndLevelLayer) {
 		}
 	}
 	void onTweet(CCObject*) {
-		geode::createQuickPopup("TweetYourCompletions", "Would you like to Tweet this completion?", "No", "Yes", [=](auto, bool tweet) {
+		geode::createQuickPopup("WarbledCompletions", "Would you like to Tweet this completion?", "No", "Yes", [=](auto, bool tweet) {
 			if (tweet) {
 				shareCompletionTo("twitter");
 			}
 		});
 	}
 	void onReddit(CCObject*) {
-		geode::createQuickPopup("TweetYourCompletions", "Would you like to post this completion in <co>r/geometrydash</c>?\n\n<cy>Remember to include video/screenshot evidence of your completion!</c>", "No", "Yes", [=](auto, bool reddit) {
+		geode::createQuickPopup("WarbledCompletions", "Would you like to post this completion in <co>r/geometrydash</c>?\n\n<cy>Remember to include video/screenshot evidence of your completion!</c>", "No", "Yes", [=](auto, bool reddit) {
 			if (reddit) {
 				shareCompletionTo("reddit");
 			}

@@ -1,4 +1,4 @@
-# TweetYourCompletions
+# WarbledCompletions
 
 Share your completions with the click of a button! This mod adds the ability to share your level completions with <cj>Twitter</c>.  
 

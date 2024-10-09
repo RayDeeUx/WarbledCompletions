@@ -5,12 +5,12 @@
 		"mac": "2.206",
 		"android": "2.206"
 	},
-	"id": "raydeeux_limegradient.tweetyourcompletions",
-	"name": "TweetYourCompletions",
+	"id": "raydeeux_limegradient.warbledcompletions",
+	"name": "WarbledCompletions",
 	"version": "v1.0.0",
 	"developers": ["RayDeeUx", "LimeGradient"],
 	"description": "Share your level completions with one click!",
-	"repository": "https://github.com/RayDeeUx/TweetYourCompletions",
+	"repository": "https://github.com/RayDeeUx/WarbledCompletions",
 	"settings": {
 		"enabled": {
 			"name": "Enabled",
@@ -42,6 +42,18 @@
 			"id": "geode.node-ids",
 			"version": ">=1.14.0",
 			"importance": "required"
+		}
+	],
+	"incompatibilities": [
+		{
+			"id": "raydeeux_limegradient.tweetyourcompletions",
+			"version": "*",
+			"importance": "superseded"
+		},
+		{
+			"id": "limegradient.lookididit",
+			"version": "*",
+			"importance": "superseded"
 		}
 	],
 	"issues": {
