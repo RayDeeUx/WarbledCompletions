@@ -55,10 +55,10 @@
 		},
 		"customURL": {
 			"name": "Custom URL",
-			"description": "Choose a custom website to open (preferably for sharing your completion, but I can't stop you).",
+			"description": "Choose a custom website to open (preferably for sharing your completion, but I can't stop you).\n\n<cy>Do</c> <c>***NOT***</c> <cy>include any URL prefixes such as:</c> <cl>ftp://</c><cy>,</c> <cl>https://</c><cy>,</c> <cl>mailto:</c><cy>, or</c> <cl>steam://</c><cy>.</c>\n<cy>WarbedCompletions will autofill the</c> <cl>https://</c> <cy>URL prefix.</c>",
 			"type": "string",
 			"default": "",
-			"match": "^(?:https?:\\/\\/)?(?:www\\.)?[\\S]+\\.[\\S]+$|^$"
+			"match": "^(?![\\S]+:\\/+)(?:www\\.)?[\\S]+\\.[\\S]+$|^$"
 		}
 	},
 	"dependencies": [

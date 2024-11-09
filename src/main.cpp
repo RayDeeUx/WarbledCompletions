@@ -117,7 +117,8 @@ class $modify(SharingEndLevelLayer, EndLevelLayer) {
 	void onWeb(CCObject*) {
 		if (getString("customURL").empty() || !getBool("enabled")) return;
 		geode::createQuickPopup("WarbledCompletions", fmt::format("Would you like to share your completion <cb>elsewhere</c>?\n\n<cy>If you choose this option, you are responsible for the contents of the web page you chose:</c>\n\n<cl>{}</c>", getString("customURL")), "No", "Yes", [=](auto, bool web) {
-			if (web) shareCompletionTo("web");
+			if (!web) return;
+			web::openLinkInBrowser(fmt::format("https://{}", getString("customURL")));
 		});
 	}
 	void customSetup() {
@@ -140,6 +141,7 @@ class $modify(SharingEndLevelLayer, EndLevelLayer) {
 		addTwitter(menu);
 		addRedditIfNotRobTopLevel(menu);
 		addBluesky(menu);
+		addWeb(menu);
 		if (menu->getChildrenCount() < 2) menu->removeMeAndCleanup();
 	}
 };
