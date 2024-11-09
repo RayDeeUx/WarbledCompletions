@@ -41,6 +41,24 @@
 			"description": "Disabling this setting will share your completions through <co>new.reddit.com</c> instead of <co>sh.reddit.com</c>.\n\n<cy>This setting is available for those who are allergic to</c> <co>Reddit</c><cy>'s most recent iteration of UI design. By disabling this, you will be gently reminded to switch the type of your post to</c> <cl>\"Images & Video\"</c> <cy>to best comply with</c> <co>r/geometrydash</c><cy>'s rules.</c>",
 			"type": "bool",
 			"default": true
+		},
+		"blueskyStyle": {
+			"name": "Bluesky Button Style",
+			"type": "string",
+			"default": "Default",
+			"one-of": [
+				"Twitr",
+				"Alphalaneous",
+				"Colon",
+				"Media Kit"
+			]
+		},
+		"customURL": {
+			"name": "Custom URL",
+			"description": "Choose a custom website to open (preferably for sharing your completion, but I can't stop you).",
+			"type": "string",
+			"default": "",
+			"match": "^(?:https?:\\/\\/)?(?:www\\.)?[\\S]+\\.[\\S]+$|^$"
 		}
 	},
 	"dependencies": [

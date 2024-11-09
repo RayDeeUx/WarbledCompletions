@@ -13,17 +13,19 @@ class $modify(SharingEndLevelLayer, EndLevelLayer) {
 	bool getBool(const std::string_view key) {
 		return Mod::get()->getSettingValue<bool>(key);
 	}
+	std::string getString(const std::string_view key) {
+		return Mod::get()->getSettingValue<std::string>(key);
+	}
 	void shareCompletionTo(std::string_view mode) {
 		GJGameLevel* level = this->m_playLayer->m_level;
-		std::string pluralOrNot = "";
 		std::string levelName = level->m_levelName;
 		std::string creatorName = level->m_creatorName;
 		int attempts = level->m_attempts.value();
-		if (attempts != 1) pluralOrNot = "s";
 		int levelID = level->m_levelID.value();
+		std::string pluralOrNot = attempts != 1 ? "s" : "";
 		for (int i = 0; i < levelName.length(); i++) {
 			if (levelName[i] == ' ') {
-				if (mode == "twitter") levelName.replace(i, 1, "%20");
+				if (mode == "twitter" || mode == "bluesky") levelName.replace(i, 1, "%20");
 				else if (mode == "reddit") levelName.replace(i, 1, "+");
 			}
 		}
@@ -61,72 +63,83 @@ class $modify(SharingEndLevelLayer, EndLevelLayer) {
 			));
 		}
 	}
+	void addWeb(CCMenu *menu) {
+		if (getString("customURL").empty() || !getBool("enabled")) return;
+		auto webButton = CCMenuItemSpriteExtra::create(CCSprite::createWithSpriteFrameName("web.png"_spr), this, menu_selector(SharingEndLevelLayer::onWeb));
+		webButton->setID("web-button"_spr);
+		menu->addChild(webButton);
+		menu->updateLayout();
+	}
+	void addBluesky(CCMenu *menu) {
+		if (!getBool("bluesky") || !getBool("enabled")) return;
+		CCSprite* blueskySprite = CCSprite::createWithSpriteFrameName("blueskyAlt.png"_spr);
+		const std::string &blueskyStyle = getString("blueskyStyle");
+		if (blueskyStyle == "Media Kit") blueskySprite = CCSprite::createWithSpriteFrameName("bluesky.png"_spr);
+		else if (blueskyStyle == "Alphalaneous") blueskySprite = CCSprite::createWithSpriteFrameName("blueskyAlpha.png"_spr);
+		else if (blueskyStyle == "Colon") blueskySprite = CCSprite::createWithSpriteFrameName("blueskyColon.png"_spr);
+		auto blueskyButton = CCMenuItemSpriteExtra::create(blueskySprite, this, menu_selector(SharingEndLevelLayer::onBluesky));
+		blueskyButton->setID("bluesky-button"_spr);
+		menu->addChild(blueskyButton);
+		menu->updateLayout();
+	}
+	void addRedditIfNotRobTopLevel(CCMenu *menu) {
+		if (!getBool("reddit") || !getBool("enabled") || m_playLayer->m_level->m_levelType == GJLevelType::Local) return;
+		auto redditButton = CCMenuItemSpriteExtra::create(CCSprite::createWithSpriteFrameName("gj_rdIcon_001.png"), this, menu_selector(SharingEndLevelLayer::onReddit));
+		redditButton->setID("reddit-button"_spr);
+		menu->addChild(redditButton);
+		menu->updateLayout();
+	}
+	void addTwitter(CCMenu *menu) {
+		if (!getBool("twitter") || !getBool("enabled")) return;
+		auto tweetButton = CCMenuItemSpriteExtra::create(CCSprite::createWithSpriteFrameName("gj_twIcon_001.png"), this, menu_selector(SharingEndLevelLayer::onTweet));
+		tweetButton->setID("tweet-button"_spr);
+		menu->addChild(tweetButton);
+		menu->updateLayout();
+	}
+	void onTweet(CCObject*) {
+		if (!getBool("twitter") || !getBool("enabled")) return;
+		geode::createQuickPopup("WarbledCompletions", "Would you like to <cj>Tweet</c> this completion?", "No", "Yes", [=](auto, bool tweet) {
+			if (tweet) shareCompletionTo("twitter");
+		});
+	}
+	void onBluesky(CCObject*) {
+		if (!getBool("bluesky") || !getBool("enabled")) return;
+		geode::createQuickPopup("WarbledCompletions", "Would you like to post this completion to <cl>Bluesky</c>?", "No", "Yes", [=](auto, bool bluesky) {
+			if (bluesky) shareCompletionTo("bluesky");
+		});
+	}
+	void onReddit(CCObject*) {
+		if (!getBool("reddit") || !getBool("enabled") || m_playLayer->m_level->m_levelType == GJLevelType::Local) return;
+		geode::createQuickPopup("WarbledCompletions", "Would you like to post this completion in <co>r/geometrydash</c>?\n\n<cy>Remember to include video/screenshot evidence of your completion!</c>", "No", "Yes", [=](auto, bool reddit) {
+			if (reddit) shareCompletionTo("reddit");
+		});
+	}
+	void onWeb(CCObject*) {
+		if (getString("customURL").empty() || !getBool("enabled")) return;
+		geode::createQuickPopup("WarbledCompletions", fmt::format("Would you like to share your completion <cb>elsewhere</c>?\n\n<cy>If you choose this option, you are responsible for the contents of the web page you chose:</c>\n\n<cl>{}</c>", getString("customURL")), "No", "Yes", [=](auto, bool web) {
+			if (web) shareCompletionTo("web");
+		});
+	}
 	void customSetup() {
 		EndLevelLayer::customSetup();
 		if (!getBool("enabled")) return;
-		if (!m_playLayer || !m_playLayer->m_level) return;
-		if (!m_mainLayer) return;
+		if (!m_playLayer || !m_playLayer->m_level || m_playLayer->m_isPracticeMode || m_playLayer->m_isTestMode || !m_mainLayer) return;
 		auto background = m_mainLayer->getChildByIDRecursive("background");
 		if (!background) return;
 		auto topBorder = background->getChildByIDRecursive("top-border");
 		if (!topBorder) return;
-		if (m_playLayer->m_isPracticeMode || m_playLayer->m_isTestMode) return;
 		CCMenu* menu = CCMenu::create();
 		RowLayout* layout = RowLayout::create();
 		menu->setID("look-i-did-it-menu"_spr);
 		menu->setContentHeight(32);
 		menu->setContentWidth(background->getContentWidth());
-		layout->setAutoScale(true)->setAxisAlignment(AxisAlignment::Center)->setAxis(Axis::Row);
+		layout->setAutoScale(true)->setAxisAlignment(AxisAlignment::Center)->setAxis(Axis::Row)->setGap(5.f)->setAutoScale(true)->setCrossAxisOverflow(false)->setDefaultScaleLimits(1.f, 1.f);
 		menu->setLayout(layout);
 		m_mainLayer->addChild(menu);
 		menu->setPositionY(convertToWorldSpace(topBorder->getPosition()).y + 43);
-		if (getBool("twitter")) {
-			auto tweetButton = CCMenuItemSpriteExtra::create(
-			   CCSprite::createWithSpriteFrameName("gj_twIcon_001.png"), this, menu_selector(SharingEndLevelLayer::onTweet)
-			);
-			tweetButton->setID("tweet-button"_spr);
-			menu->addChild(tweetButton);
-			menu->updateLayout();
-		}
-		if (getBool("reddit") && m_playLayer->m_level->m_levelType != GJLevelType::Local) {
-			auto redditButton = CCMenuItemSpriteExtra::create(
-			   CCSprite::createWithSpriteFrameName("gj_rdIcon_001.png"), this, menu_selector(SharingEndLevelLayer::onReddit)
-			);
-			redditButton->setID("reddit-button"_spr);
-			menu->addChild(redditButton);
-			menu->updateLayout();
-		}
-		if (getBool("bluesky")) {
-			auto blueskyButton = CCMenuItemSpriteExtra::create(
-			   CCSprite::createWithSpriteFrameName("blueskyAlpha.png"_spr), this, menu_selector(SharingEndLevelLayer::onBluesky)
-			);
-			blueskyButton->setID("bluesky-button"_spr);
-			menu->addChild(blueskyButton);
-			menu->updateLayout();
-		}
-		if (menu->getChildrenCount() < 2) {
-			menu->removeMeAndCleanup();
-		}
-	}
-	void onTweet(CCObject*) {
-		geode::createQuickPopup("WarbledCompletions", "Would you like to <cj>Tweet</c> this completion?", "No", "Yes", [=](auto, bool tweet) {
-			if (tweet) {
-				shareCompletionTo("twitter");
-			}
-		});
-	}
-	void onBluesky(CCObject*) {
-		geode::createQuickPopup("WarbledCompletions", "Would you like to post this completion to <cl>Bluesky</c>?", "No", "Yes", [=](auto, bool bluesky) {
-			if (bluesky) {
-				shareCompletionTo("bluesky");
-			}
-		});
-	}
-	void onReddit(CCObject*) {
-		geode::createQuickPopup("WarbledCompletions", "Would you like to post this completion in <co>r/geometrydash</c>?\n\n<cy>Remember to include video/screenshot evidence of your completion!</c>", "No", "Yes", [=](auto, bool reddit) {
-			if (reddit) {
-				shareCompletionTo("reddit");
-			}
-		});
+		addTwitter(menu);
+		addRedditIfNotRobTopLevel(menu);
+		addBluesky(menu);
+		if (menu->getChildrenCount() < 2) menu->removeMeAndCleanup();
 	}
 };
