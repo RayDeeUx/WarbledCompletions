@@ -98,7 +98,7 @@ class $modify(SharingEndLevelLayer, EndLevelLayer) {
 		}
 		if (getBool("bluesky")) {
 			auto blueskyButton = CCMenuItemSpriteExtra::create(
-			   CCSprite::createWithSpriteFrameName("blueskyAlt.png"_spr), this, menu_selector(SharingEndLevelLayer::onBluesky)
+			   CCSprite::createWithSpriteFrameName("blueskyAlpha.png"_spr), this, menu_selector(SharingEndLevelLayer::onBluesky)
 			);
 			blueskyButton->setID("bluesky-button"_spr);
 			menu->addChild(blueskyButton);
