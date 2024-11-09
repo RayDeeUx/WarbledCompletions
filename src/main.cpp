@@ -88,20 +88,20 @@ class $modify(SharingEndLevelLayer, EndLevelLayer) {
 			menu->addChild(tweetButton);
 			menu->updateLayout();
 		}
-		if (getBool("bluesky")) {
-			auto blueskyButton = CCMenuItemSpriteExtra::create(
-			   CCSprite::createWithSpriteFrameName("bluesky.png"_spr), this, menu_selector(SharingEndLevelLayer::onBluesky)
-			);
-			blueskyButton->setID("bluesky-button"_spr);
-			menu->addChild(blueskyButton);
-			menu->updateLayout();
-		}
 		if (getBool("reddit") && m_playLayer->m_level->m_levelType != GJLevelType::Local) {
 			auto redditButton = CCMenuItemSpriteExtra::create(
 			   CCSprite::createWithSpriteFrameName("gj_rdIcon_001.png"), this, menu_selector(SharingEndLevelLayer::onReddit)
 			);
 			redditButton->setID("reddit-button"_spr);
 			menu->addChild(redditButton);
+			menu->updateLayout();
+		}
+		if (getBool("bluesky")) {
+			auto blueskyButton = CCMenuItemSpriteExtra::create(
+			   CCSprite::createWithSpriteFrameName("blueskyAlt.png"_spr), this, menu_selector(SharingEndLevelLayer::onBluesky)
+			);
+			blueskyButton->setID("bluesky-button"_spr);
+			menu->addChild(blueskyButton);
 			menu->updateLayout();
 		}
 		if (menu->getChildrenCount() < 2) {
