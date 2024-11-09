@@ -51,6 +51,14 @@ class $modify(SharingEndLevelLayer, EndLevelLayer) {
 					levelID
 				));
 			}
+		} else if (mode == "bluesky") {
+			web::openLinkInBrowser(fmt::format("https://bsky.app/intent/compose?text=I%20just%20completed%20{}%20by%20{}%20in%20{}%20attempt{}%21%20If%20you%20want%20to%20try%20it,%20the%20ID%20is%20{}.",
+				levelName,
+				creatorName,
+				attempts,
+				pluralOrNot,
+				levelID
+			));
 		}
 	}
 	void customSetup() {
@@ -80,6 +88,14 @@ class $modify(SharingEndLevelLayer, EndLevelLayer) {
 			menu->addChild(tweetButton);
 			menu->updateLayout();
 		}
+		if (getBool("bluesky")) {
+			auto blueskyButton = CCMenuItemSpriteExtra::create(
+			   CCSprite::createWithSpriteFrameName("bluesky.png"_spr), this, menu_selector(SharingEndLevelLayer::onBluesky)
+			);
+			blueskyButton->setID("bluesky-button"_spr);
+			menu->addChild(blueskyButton);
+			menu->updateLayout();
+		}
 		if (getBool("reddit") && m_playLayer->m_level->m_levelType != GJLevelType::Local) {
 			auto redditButton = CCMenuItemSpriteExtra::create(
 			   CCSprite::createWithSpriteFrameName("gj_rdIcon_001.png"), this, menu_selector(SharingEndLevelLayer::onReddit)
@@ -93,9 +109,16 @@ class $modify(SharingEndLevelLayer, EndLevelLayer) {
 		}
 	}
 	void onTweet(CCObject*) {
-		geode::createQuickPopup("WarbledCompletions", "Would you like to Tweet this completion?", "No", "Yes", [=](auto, bool tweet) {
+		geode::createQuickPopup("WarbledCompletions", "Would you like to <cj>Tweet</c> this completion?", "No", "Yes", [=](auto, bool tweet) {
 			if (tweet) {
 				shareCompletionTo("twitter");
+			}
+		});
+	}
+	void onBluesky(CCObject*) {
+		geode::createQuickPopup("WarbledCompletions", "Would you like to post this completion to <cl>Bluesky</c>?", "No", "Yes", [=](auto, bool bluesky) {
+			if (bluesky) {
+				shareCompletionTo("bluesky");
 			}
 		});
 	}

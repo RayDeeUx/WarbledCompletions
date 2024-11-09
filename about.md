@@ -1,5 +1,3 @@
 # WarbledCompletions
 
-Share your completions with the click of a button! This mod adds the ability to share your level completions with <cj>Twitter</c>.  
-
-When completing a level, press the <cj>Twitter</c> button and it will automatically make a tweet for you!
+`warble (intransitive verb) [wȯr-bəl, war·​ble]: to sing in a trilling manner or with many turns and variations.`
