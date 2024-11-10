@@ -15,7 +15,8 @@ TODO
 
 using namespace geode::prelude;
 
-const std::string &configDir = Mod::get()->getConfigDir().string();
+const std::filesystem::path &configDirPath = Mod::get()->getConfigDir();
+const std::string &configDir = configDirPath.string();
 
 class $modify(SharingEndLevelLayer, EndLevelLayer) {
 	static void onModify(auto& self) {
@@ -171,6 +172,10 @@ class $modify(SharingEndLevelLayer, EndLevelLayer) {
 	// original code: https://raw.githubusercontent.com/TheSillyDoggo/Screenshot-Mod/main/src/main.cpp
 	// also uses https://github.com/dacap/clip library, licensed under MIT License
 	void onScreenshot(CCObject*) {
+		if (!getBool("enabled")) return;
+		if (!m_playLayer || !m_playLayer->m_level) return showScreenshotFailurePopup();
+		const auto &pl = m_playLayer;
+		const auto &level = m_playLayer->m_level;
 		CCScene* scene = CCDirector::sharedDirector()->getRunningScene();
 		int width = static_cast<int>(scene->getContentWidth());
 		int height = static_cast<int>(scene->getContentHeight());
@@ -188,31 +193,22 @@ class $modify(SharingEndLevelLayer, EndLevelLayer) {
 
 		// Save the image to file
 		if (!image) return showScreenshotFailurePopup();
-		const char* filePath = fmt::format("{}/{}.png", configDir, numToString<int>(m_playLayer->m_level->m_levelID.value())).c_str();
+		const char* filePath = fmt::format(
+			"{}/{} by {} [{}] ({}).png",
+			configDir,
+			std::string(level->m_levelName),
+			std::string(level->m_creatorName),
+			level->m_levelID.value(),
+			std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count()
+		).c_str();
 		image->saveToFile(filePath);
-
-		// Set clipboard data
-		const auto data = image->getData();
-		#ifdef GEODE_IS_WINDOWS
-		if (OpenClipboard(nullptr)) {
-			if (EmptyClipboard()) {
-				SetClipboardData(CF_BITMAP, CreateBitmap(width, height, 1, 32, data));
-				CloseClipboard();
-			}
-		}
-		#elif defined(GEODE_IS_MACOS)
-		NSImage * image = [[NSImage alloc] initWithCGImage:cgImg size:NSMakeSize(width, height)];
-		if (image != nil) {
-			NSPasteboard *pasteboard = [NSPasteboard generalPasteboard];
-			[pasteboard clearContents];
-			NSArray *copiedObjects = [NSArray arrayWithObject:image];
-			[pasteboard writeObjects:copiedObjects];
-		}
-		#endif
-
 		// Release image
 		image->release();
-		// std::filesystem::remove(filePath);
+
+		geode::createQuickPopup("WarbledCompletions", "Screenshot complete! Would you like to open the location of your screenshot?\n\n<cy>(Copying a screenshot to your clipboard for copy-pasting isn't as easy as it sounds.)</c>", "No", "Yes", [=](auto, bool configDir) {
+			if (!configDir) return;
+			geode::utils::file::openFolder(configDirPath);
+		});
 	}
 	void customSetup() {
 		EndLevelLayer::customSetup();
