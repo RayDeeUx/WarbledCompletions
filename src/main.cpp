@@ -33,19 +33,24 @@ class $modify(SharingEndLevelLayer, EndLevelLayer) {
 	}
 	void shareCompletionTo(std::string_view mode) {
 		GJGameLevel* level = this->m_playLayer->m_level;
-		std::string levelName = level->m_levelName;
+		bool isOwnLevel = level->m_levelID.value() == 0;
+		std::string levelName = isOwnLevel ? "me" : level->m_levelName;
 		std::string creatorName = level->m_creatorName;
 		int attempts = level->m_attempts.value();
-		int levelID = level->m_levelID.value();
+		std::string levelID = isOwnLevel ? "not available right now, but will be soon" : std::to_string(level->m_levelID.value());
+		std::string completedOrVerified = isOwnLevel ? "verified" : "completed";
 		std::string pluralOrNot = attempts != 1 ? "s" : "";
 		for (int i = 0; i < levelName.length(); i++) {
 			if (levelName[i] == ' ') {
 				if (mode == "twitter" || mode == "bluesky") levelName.replace(i, 1, "%20");
 				else levelName.replace(i, 1, "+");
+			} else if (levelName[i] == '!') {
+				levelName.replace(i, 1, "%21");
 			}
 		}
 		if (mode == "twitter") {
-			web::openLinkInBrowser(fmt::format("https://twitter.com/intent/tweet?text=I%20just%20completed%20{}%20by%20{}%20in%20{}%20attempt{}%21%20If%20you%20want%20to%20try%20it,%20the%20ID%20is%20{}.",
+			web::openLinkInBrowser(fmt::format("https://twitter.com/intent/tweet?text=I%20just%20{}%20{}%20by%20{}%20in%20{}%20attempt{}%21%20If%20you%20want%20to%20try%20it,%20the%20ID%20is%20{}.",
+				completedOrVerified,
 				levelName,
 				creatorName,
 				attempts,
@@ -53,7 +58,8 @@ class $modify(SharingEndLevelLayer, EndLevelLayer) {
 				levelID
 			));
 		} else if (mode == "bluesky") {
-			web::openLinkInBrowser(fmt::format("https://bsky.app/intent/compose?text=I%20just%20completed%20{}%20by%20{}%20in%20{}%20attempt{}%21%20If%20you%20want%20to%20try%20it,%20the%20ID%20is%20{}.",
+			web::openLinkInBrowser(fmt::format("https://bsky.app/intent/compose?text=I%20just%20{}%20{}%20by%20{}%20in%20{}%20attempt{}%21%20If%20you%20want%20to%20try%20it,%20the%20ID%20is%20{}.",
+				completedOrVerified,
 				levelName,
 				creatorName,
 				attempts,
@@ -61,8 +67,9 @@ class $modify(SharingEndLevelLayer, EndLevelLayer) {
 				levelID
 			));
 		} else if (mode == "mastodon") {
-			web::openLinkInBrowser(fmt::format("https://{}/share?text=I+just+completed+{}+by+{}+in+{}+attempt{}%21+If+you+want+to+try+it,+the+ID+is+{}.",
+			web::openLinkInBrowser(fmt::format("https://{}/share?text=I+just+{}+{}+by+{}+in+{}+attempt{}%21+If+you+want+to+try+it,+the+ID+is+{}.",
 				getString("mastodonInstance"),
+				completedOrVerified,
 				levelName,
 				creatorName,
 				attempts,
@@ -71,14 +78,16 @@ class $modify(SharingEndLevelLayer, EndLevelLayer) {
 			));
 		} else if (mode == "reddit") {
 			if (getBool("useSHReddit")) {
-				web::openLinkInBrowser(fmt::format("https://sh.reddit.com/r/geometrydash/submit/?title=I+just+completed+{}+in+{}+attempt{}!+ID:+{}&type=IMAGE",
+				web::openLinkInBrowser(fmt::format("https://sh.reddit.com/r/geometrydash/submit/?title=I+just+{}+{}+in+{}+attempt{}!+ID:+{}&type=IMAGE",
+					completedOrVerified,
 					levelName,
 					attempts,
 					pluralOrNot,
 					levelID
 				));
 			} else {
-				web::openLinkInBrowser(fmt::format("https://new.reddit.com/r/geometrydash/submit?title=I+just+completed+{}+in+{}+attempt{}!+ID:+{}&selftext=true&text=Hey+there!%0AYou+should+click+on+the+%22Images+%26+Video%22+tab+to+attach+your+video+recording+of+your+level+completion+so+your+post+follows+r%2Fgeometrydash+rules.%0APosting+this+text+alone+will+get+your+post+auto-removed.+Thanks!%0A--RayDeeUx%2C+in+cooperation+with+r%2Fgeometrydash+staff",
+				web::openLinkInBrowser(fmt::format("https://new.reddit.com/r/geometrydash/submit?title=I+just+{}+{}+in+{}+attempt{}!+ID:+{}&selftext=true&text=Hey+there!%0AYou+should+click+on+the+%22Images+%26+Video%22+tab+to+attach+your+video+recording+of+your+level+completion+so+your+post+follows+r%2Fgeometrydash+rules.%0APosting+this+text+alone+will+get+your+post+auto-removed.+Thanks!%0A--RayDeeUx%2C+in+cooperation+with+r%2Fgeometrydash+staff",
+					completedOrVerified,
 					levelName,
 					attempts,
 					pluralOrNot,
@@ -170,7 +179,6 @@ class $modify(SharingEndLevelLayer, EndLevelLayer) {
 	}
 	// adapted from code by TheSillyDoggo (she/her): https://discord.com/channels/911701438269386882/911702535373475870/1291198134013394946
 	// original code: https://raw.githubusercontent.com/TheSillyDoggo/Screenshot-Mod/main/src/main.cpp
-	// also uses https://github.com/dacap/clip library, licensed under MIT License
 	void onScreenshot(CCObject*) {
 		if (!getBool("enabled")) return;
 		if (!m_playLayer || !m_playLayer->m_level) return showScreenshotFailurePopup();
@@ -193,12 +201,13 @@ class $modify(SharingEndLevelLayer, EndLevelLayer) {
 
 		// Save the image to file
 		if (!image) return showScreenshotFailurePopup();
+		std::string levelID = level->m_levelID.value() == 0 ? "Custom level" : std::to_string(level->m_levelID.value());
 		const char* filePath = fmt::format(
 			"{}/{} by {} [{}] ({}).png",
 			configDir,
 			std::string(level->m_levelName),
 			std::string(level->m_creatorName),
-			level->m_levelID.value(),
+			levelID,
 			std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count()
 		).c_str();
 		image->saveToFile(filePath);
