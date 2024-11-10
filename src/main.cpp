@@ -104,6 +104,23 @@ class $modify(SharingEndLevelLayer, EndLevelLayer) {
 		geode::utils::web::openLinkInBrowser("https://discord.com/app");
 		return FLAlertLayer::create("WarbledCompletions Error!", "You did not provide a valid app to open <cb>Discord</c>.\n\n<cy>WarbledCompletions is opening Discord in your web browser instead.</c>", "Oof...")->show();
 	}
+	static void openDiscordHopefully() {
+		if (!getBool("enabled")) return;
+		if (getPath("discordApp").string().empty()) return showDiscordFailurePopup();
+		std::filesystem::path discordPath = getPath("discordApp");
+		std::string discordPathFixed, command;
+		#ifdef GEODE_IS_WINDOWS
+		discordPathFixed = geode::utils::string::wideToUtf8(discordPath);
+		if (!utils::string::endsWith(discordPathFixed, ".exe")) return showDiscordFailurePopup();
+		command = fmt::format("start {}", discordPathFixed);
+		#elif defined(GEODE_IS_MACOS)
+		discordPathFixed = discordPath.string();
+		if (!utils::string::endsWith(discordPathFixed, ".app")) return showDiscordFailurePopup();
+		command = fmt::format("open {}", discordPathFixed);
+		#endif
+		if (!utils::string::contains(discordPathFixed, "Discord.") && !utils::string::contains(discordPathFixed, "DiscordPTB.") && !utils::string::contains(discordPathFixed, "DiscordCanary.") && !utils::string::contains(discordPathFixed, "Vesktop")) return showDiscordFailurePopup();
+		system(command.c_str());
+	}
 	void addScreenshot(CCMenu *menu) {
 		if (!getBool("enabled")) return;
 		auto screenshotButton = CCMenuItemSpriteExtra::create(CCSprite::createWithSpriteFrameName("screenshot.png"_spr), this, menu_selector(SharingEndLevelLayer::onScreenshot));
@@ -160,50 +177,43 @@ class $modify(SharingEndLevelLayer, EndLevelLayer) {
 	}
 	void onTweet(CCObject*) {
 		if (isDisabled("twitter")) return;
+		if (getBool("skipConfirmation")) return shareCompletionTo("twitter");
 		geode::createQuickPopup("WarbledCompletions", "Would you like to <cj>Tweet</c> this completion?", "No", "Yes", [=](auto, bool tweet) {
 			if (tweet) shareCompletionTo("twitter");
 		});
 	}
 	void onBluesky(CCObject*) {
 		if (isDisabled("bluesky")) return;
+		if (getBool("skipConfirmation")) return shareCompletionTo("bluesky");
 		geode::createQuickPopup("WarbledCompletions", "Would you like to post this completion to <cl>Bluesky</c>?", "No", "Yes", [=](auto, bool bluesky) {
 			if (bluesky) shareCompletionTo("bluesky");
 		});
 	}
 	void onMastodon(CCObject*) {
 		if (isDisabled("mastodon")) return;
+		if (getBool("skipConfirmation")) return shareCompletionTo("mastodon");
 		geode::createQuickPopup("WarbledCompletions", fmt::format("Would you like to post this completion in <ca>{}</c>, a <ca>Mastodon</c> instance?", getString("mastodonInstance")), "No", "Yes", [=](auto, bool mastodon) {
 			if (mastodon) shareCompletionTo("mastodon");
 		});
 	}
 	void onReddit(CCObject*) {
 		if (isDisabled("reddit") || m_playLayer->m_level->m_levelType == GJLevelType::Local) return;
+		if (getBool("skipConfirmation")) return shareCompletionTo("reddit");
 		geode::createQuickPopup("WarbledCompletions", "Would you like to post this completion in <co>r/geometrydash</c>?\n\n<cy>Remember to include video/screenshot evidence of your completion!</c>", "No", "Yes", [=](auto, bool reddit) {
 			if (reddit) shareCompletionTo("reddit");
 		});
 	}
 	void onOpenTheDiscordAppOrSomething(CCObject*) {
 		if (isDisabled("discord")) return;
+		if (getBool("skipConfirmation")) return openDiscordHopefully();
 		geode::createQuickPopup("WarbledCompletions", "Would you like to open <cb>Discord</c> to share your completion?\n\n<cy>WarbledCompletions is not responsible for any damages (tangible or otherwise) if Discord's \"Streamer Mode\" is not active.</c>", "No", "Yes", [=](auto, bool discord) {
 			if (!discord) return;
-			if (getPath("discordApp").string().empty()) return showDiscordFailurePopup();
-			std::filesystem::path discordPath = getPath("discordApp");
-			std::string discordPathFixed, command;
-			#ifdef GEODE_IS_WINDOWS
-			discordPathFixed = geode::utils::string::wideToUtf8(discordPath);
-			if (!utils::string::endsWith(discordPathFixed, ".exe")) return showDiscordFailurePopup();
-			command = fmt::format("start {}", discordPathFixed);
-			#elif defined(GEODE_IS_MACOS)
-			discordPathFixed = discordPath.string();
-			if (!utils::string::endsWith(discordPathFixed, ".app")) return showDiscordFailurePopup();
-			command = fmt::format("open {}", discordPathFixed);
-			#endif
-			if (!utils::string::contains(discordPathFixed, "Discord.") && !utils::string::contains(discordPathFixed, "DiscordPTB.") && !utils::string::contains(discordPathFixed, "DiscordCanary.") && !utils::string::contains(discordPathFixed, "Vesktop")) return showDiscordFailurePopup();
-			system(command.c_str());
+			return openDiscordHopefully();
 		});
 	}
 	void onWeb(CCObject*) {
 		if (getString("customURL").empty() || !getBool("enabled")) return;
+		if (getBool("skipConfirmation")) return geode::utils::web::openLinkInBrowser(fmt::format("https://{}", getString("customURL")));
 		geode::createQuickPopup("WarbledCompletions", fmt::format("Would you like to share your completion <cb>elsewhere</c>?\n\n<cy>If you choose this option, you are responsible for the contents of the web page you chose:</c>\n\n<cl>{}</c>", getString("customURL")), "No", "Yes", [=](auto, bool web) {
 			if (!web) return;
 			geode::utils::web::openLinkInBrowser(fmt::format("https://{}", getString("customURL")));
@@ -275,6 +285,5 @@ class $modify(SharingEndLevelLayer, EndLevelLayer) {
 		addDiscord(menu);
 		addWeb(menu);
 		addScreenshot(menu);
-		if (menu->getChildrenCount() < 2) menu->removeMeAndCleanup();
 	}
 };

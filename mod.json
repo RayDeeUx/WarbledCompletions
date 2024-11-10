@@ -18,6 +18,12 @@
 			"type": "bool",
 			"default": true
 		},
+		"skipConfirmation": {
+			"name": "Skip Confirmation Prompts",
+			"description": "Skip all confirmation prompts.\n\n<cy>By enabling this, you agree that:</c>\n<cy>- You have enabled Streamer Mode on Discord, if you choose to open Discord after a level completion</c>\n<cy>- You have chosen a valid Mastodon instance to share your completions to</c>\n<cy>- You are aware that screenshots are stored in this mod's config directory, and not automatically copied to your clipboard.</c>",
+			"type": "bool",
+			"default": false
+		},
 		"twitter": {
 			"name": "Share to Twitter",
 			"description": "Enable sharing your completion to <cj>Twitter</c>.",
@@ -61,7 +67,7 @@
 		},
 		"mastodonInstance": {
 			"name": "Mastodon Instance",
-			"description": "Include your preferred <ca>mastodon.social</c> instance here.",
+			"description": "Include your preferred <ca>mastodon.social</c> instance here.\n\n<cy>If you don't know what a</c> <ca>Mastodon</c> <cy>instance is, please don't edit this setting.</c>",
 			"type": "string",
 			"default": "mastodon.social",
 			"match": "^[\\S]+\\.[\\S]+$"
@@ -82,7 +88,7 @@
 				"filters": [
 					{
 						"files": [ "*.exe", "*.app" ],
-						"description": "Executable programs"
+						"description": "DISCORD/VESKTOP, PLEASE"
 					}
 				]
 			},
@@ -91,7 +97,7 @@
 		},
 		"customURL": {
 			"name": "Custom URL",
-			"description": "Choose a custom website to open (preferably for sharing your completion, but I can't stop you).\n\n<cy>Do</c> <c>***NOT***</c> <cy>include any URL prefixes such as:</c> <cl>ftp://</c><cy>,</c> <cl>https://</c><cy>,</c> <cl>mailto:</c><cy>, or</c> <cl>steam://</c><cy>.</c>\n<cy>WarbedCompletions will autofill the</c> <cl>https://</c> <cy>URL prefix.</c>",
+			"description": "Choose a custom website to open (preferably for sharing your completion, but I can't stop you).\n<cy>To disable this setting, make it blank.</c>\n<cy>Do</c> <c>***NOT***</c> <cy>include any URL prefixes such as:</c> <cl>ftp://</c><cy>,</c> <cl>https://</c><cy>,</c> <cl>mailto:</c><cy>, or</c> <cl>steam://</c><cy>.</c>\n<cy>WarbedCompletions will autofill the</c> <cl>https://</c> <cy>URL prefix.</c>",
 			"type": "string",
 			"default": "",
 			"match": "^(?![\\S]+:\\/+)(?:www\\.)?[\\S]+\\.[\\S]+$|^$"
