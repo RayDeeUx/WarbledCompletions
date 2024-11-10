@@ -58,15 +58,15 @@ class $modify(SharingEndLevelLayer, EndLevelLayer) {
 				levelID
 			));
 		} else if (mode == "reddit") {
-			if (!getBool("useSHReddit")) {
-				web::openLinkInBrowser(fmt::format("https://new.reddit.com/r/geometrydash/submit?title=I+just+completed+{}+in+{}+attempt{}!+ID:+{}&selftext=true&text=Hey+there!%0AYou+should+click+on+the+%22Images+%26+Video%22+tab+to+attach+your+video+recording+of+your+level+completion+so+your+post+follows+r%2Fgeometrydash+rules.%0APosting+this+text+alone+will+get+your+post+auto-removed.+Thanks!%0A--RayDeeUx%2C+in+cooperation+with+r%2Fgeometrydash+staff",
+			if (getBool("useSHReddit")) {
+				web::openLinkInBrowser(fmt::format("https://sh.reddit.com/r/geometrydash/submit/?title=I+just+completed+{}+in+{}+attempt{}!+ID:+{}&type=IMAGE",
 					levelName,
 					attempts,
 					pluralOrNot,
 					levelID
 				));
 			} else {
-				web::openLinkInBrowser(fmt::format("https://sh.reddit.com/r/geometrydash/submit/?title=I+just+completed+{}+in+{}+attempt{}!+ID:+{}&type=IMAGE",
+				web::openLinkInBrowser(fmt::format("https://new.reddit.com/r/geometrydash/submit?title=I+just+completed+{}+in+{}+attempt{}!+ID:+{}&selftext=true&text=Hey+there!%0AYou+should+click+on+the+%22Images+%26+Video%22+tab+to+attach+your+video+recording+of+your+level+completion+so+your+post+follows+r%2Fgeometrydash+rules.%0APosting+this+text+alone+will+get+your+post+auto-removed.+Thanks!%0A--RayDeeUx%2C+in+cooperation+with+r%2Fgeometrydash+staff",
 					levelName,
 					attempts,
 					pluralOrNot,
@@ -166,6 +166,7 @@ class $modify(SharingEndLevelLayer, EndLevelLayer) {
 		addTwitter(menu);
 		addRedditIfNotRobTopLevel(menu);
 		addBluesky(menu);
+		addMastodon(menu);
 		addWeb(menu);
 		if (menu->getChildrenCount() < 2) menu->removeMeAndCleanup();
 	}

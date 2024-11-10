@@ -49,9 +49,9 @@
 		},
 		"useSHReddit": {
 			"name": "Use sh.reddit.com instead of new.reddit.com",
-			"description": "Disabling this setting will share your completions through <co>new.reddit.com</c> instead of <co>sh.reddit.com</c>.\n\n<cy>This setting is available for those who are allergic to</c> <co>Reddit</c><cy>'s most recent iteration of UI design. By disabling this, you will be gently reminded to switch the type of your post to</c> <cl>\"Images & Video\"</c> <cy>to best comply with</c> <co>r/geometrydash</c><cy>'s rules.</c>",
+			"description": "Disabling this setting will share your completions through <co>sh.reddit.com</c> instead of <co>new.reddit.com</c>.\n\n<cy>This setting is available for those who are allergic to</c> <co>Reddit</c><cy>'s most recent iteration of UI design. By disabling this, you will be gently reminded to switch the type of your post to</c> <cl>\"Images & Video\"</c> <cy>to best comply with</c> <co>r/geometrydash</c><cy>'s rules.</c>",
 			"type": "bool",
-			"default": true
+			"default": false
 		},
 		"mastodon": {
 			"name": "Share to Mastodon",
