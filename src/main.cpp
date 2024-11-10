@@ -194,10 +194,9 @@ class $modify(SharingEndLevelLayer, EndLevelLayer) {
 		// Set clipboard data
 		const auto data = image->getData();
 		#ifdef GEODE_IS_WINDOWS
-		auto bitmap = CreateBitmap(width, height, 1, 32, data);
 		if (OpenClipboard(nullptr)) {
 			if (EmptyClipboard()) {
-				SetClipboardData(CF_BITMAP, bitmap);
+				SetClipboardData(CF_BITMAP, CreateBitmap(width, height, 1, 32, data));
 				CloseClipboard();
 			}
 		}
