@@ -201,7 +201,7 @@ class $modify(SharingEndLevelLayer, EndLevelLayer) {
 				CloseClipboard();
 			}
 		}
-		#else defined(GEODE_IS_MACOS)
+		#elif defined(GEODE_IS_MACOS)
 		NSImage * image = [[NSImage alloc] initWithCGImage:cgImg size:NSMakeSize(width, height)];
 		if (image != nil) {
 			NSPasteboard *pasteboard = [NSPasteboard generalPasteboard];
