@@ -22,14 +22,17 @@ class $modify(SharingEndLevelLayer, EndLevelLayer) {
 	static void onModify(auto& self) {
 		(void) self.setHookPriority("EndLevelLayer::customSetup", PREFERRED_HOOK_PRIO);
 	}
-	bool getBool(const std::string_view key) {
+	static bool getBool(const std::string_view key) {
 		return Mod::get()->getSettingValue<bool>(key);
 	}
-	bool isDisabled(const std::string_view key) {
+	static bool isDisabled(const std::string_view key) {
 		return !getBool(key) || !getBool("enabled");
 	}
-	std::string getString(const std::string_view key) {
+	static std::string getString(const std::string_view key) {
 		return Mod::get()->getSettingValue<std::string>(key);
+	}
+	static std::filesystem::path getPath(const std::string_view key) {
+		return Mod::get()->getSettingValue<std::filesystem::path>(key);
 	}
 	void shareCompletionTo(std::string_view mode) {
 		GJGameLevel* level = this->m_playLayer->m_level;
@@ -41,15 +44,13 @@ class $modify(SharingEndLevelLayer, EndLevelLayer) {
 		std::string completedOrVerified = isOwnLevel ? "verified" : "completed";
 		std::string pluralOrNot = attempts != 1 ? "s" : "";
 		for (int i = 0; i < levelName.length(); i++) {
-			if (levelName[i] == ' ') {
+			if (levelName[i] == ' ' && mode != "web") {
 				if (mode == "twitter" || mode == "bluesky") levelName.replace(i, 1, "%20");
 				else levelName.replace(i, 1, "+");
-			} else if (levelName[i] == '!') {
-				levelName.replace(i, 1, "%21");
 			}
 		}
 		if (mode == "twitter") {
-			web::openLinkInBrowser(fmt::format("https://twitter.com/intent/tweet?text=I%20just%20{}%20{}%20by%20{}%20in%20{}%20attempt{}%21%20If%20you%20want%20to%20try%20it,%20the%20ID%20is%20{}.",
+			geode::utils::web::openLinkInBrowser(fmt::format("https://twitter.com/intent/tweet?text=I%20just%20{}%20{}%20by%20{}%20in%20{}%20attempt{}%21%20If%20you%20want%20to%20try%20it,%20the%20ID%20is%20{}.",
 				completedOrVerified,
 				levelName,
 				creatorName,
@@ -58,7 +59,7 @@ class $modify(SharingEndLevelLayer, EndLevelLayer) {
 				levelID
 			));
 		} else if (mode == "bluesky") {
-			web::openLinkInBrowser(fmt::format("https://bsky.app/intent/compose?text=I%20just%20{}%20{}%20by%20{}%20in%20{}%20attempt{}%21%20If%20you%20want%20to%20try%20it,%20the%20ID%20is%20{}.",
+			geode::utils::web::openLinkInBrowser(fmt::format("https://bsky.app/intent/compose?text=I%20just%20{}%20{}%20by%20{}%20in%20{}%20attempt{}%21%20If%20you%20want%20to%20try%20it,%20the%20ID%20is%20{}.",
 				completedOrVerified,
 				levelName,
 				creatorName,
@@ -67,7 +68,7 @@ class $modify(SharingEndLevelLayer, EndLevelLayer) {
 				levelID
 			));
 		} else if (mode == "mastodon") {
-			web::openLinkInBrowser(fmt::format("https://{}/share?text=I+just+{}+{}+by+{}+in+{}+attempt{}%21+If+you+want+to+try+it,+the+ID+is+{}.",
+			geode::utils::web::openLinkInBrowser(fmt::format("https://{}/share?text=I+just+{}+{}+by+{}+in+{}+attempt{}%21+If+you+want+to+try+it,+the+ID+is+{}.",
 				getString("mastodonInstance"),
 				completedOrVerified,
 				levelName,
@@ -78,7 +79,7 @@ class $modify(SharingEndLevelLayer, EndLevelLayer) {
 			));
 		} else if (mode == "reddit") {
 			if (getBool("useSHReddit")) {
-				web::openLinkInBrowser(fmt::format("https://sh.reddit.com/r/geometrydash/submit/?title=I+just+{}+{}+in+{}+attempt{}!+ID:+{}&type=IMAGE",
+				geode::utils::web::openLinkInBrowser(fmt::format("https://sh.reddit.com/r/geometrydash/submit/?title=I+just+{}+{}+in+{}+attempt{}!+ID:+{}&type=IMAGE",
 					completedOrVerified,
 					levelName,
 					attempts,
@@ -86,7 +87,7 @@ class $modify(SharingEndLevelLayer, EndLevelLayer) {
 					levelID
 				));
 			} else {
-				web::openLinkInBrowser(fmt::format("https://new.reddit.com/r/geometrydash/submit?title=I+just+{}+{}+in+{}+attempt{}!+ID:+{}&selftext=true&text=Hey+there!%0AYou+should+click+on+the+%22Images+%26+Video%22+tab+to+attach+your+video+recording+of+your+level+completion+so+your+post+follows+r%2Fgeometrydash+rules.%0APosting+this+text+alone+will+get+your+post+auto-removed.+Thanks!%0A--RayDeeUx%2C+in+cooperation+with+r%2Fgeometrydash+staff",
+				geode::utils::web::openLinkInBrowser(fmt::format("https://new.reddit.com/r/geometrydash/submit?title=I+just+{}+{}+in+{}+attempt{}!+ID:+{}&selftext=true&text=Hey+there!%0AYou+should+click+on+the+%22Images+%26+Video%22+tab+to+attach+your+video+recording+of+your+level+completion+so+your+post+follows+r%2Fgeometrydash+rules.%0APosting+this+text+alone+will+get+your+post+auto-removed.+Thanks!%0A--RayDeeUx%2C+in+cooperation+with+r%2Fgeometrydash+staff",
 					completedOrVerified,
 					levelName,
 					attempts,
@@ -98,6 +99,10 @@ class $modify(SharingEndLevelLayer, EndLevelLayer) {
 	}
 	static void showScreenshotFailurePopup() {
 		return FLAlertLayer::create("WarbledCompletions Error!", "There was an error while taking a screenshot.", "Oof...")->show();
+	}
+	static void showDiscordFailurePopup() {
+		geode::utils::web::openLinkInBrowser("https://discord.com/app");
+		return FLAlertLayer::create("WarbledCompletions Error!", "You did not provide a valid app to open <cb>Discord</c>.\n\n<cy>WarbledCompletions is opening Discord in your web browser instead.</c>", "Oof...")->show();
 	}
 	void addScreenshot(CCMenu *menu) {
 		if (!getBool("enabled")) return;
@@ -111,6 +116,13 @@ class $modify(SharingEndLevelLayer, EndLevelLayer) {
 		auto webButton = CCMenuItemSpriteExtra::create(CCSprite::createWithSpriteFrameName("web.png"_spr), this, menu_selector(SharingEndLevelLayer::onWeb));
 		webButton->setID("web-button"_spr);
 		menu->addChild(webButton);
+		menu->updateLayout();
+	}
+	void addDiscord(CCMenu *menu) {
+		if (isDisabled("discord") || getPath("discordApp").empty()) return;
+		auto discordButton = CCMenuItemSpriteExtra::create(CCSprite::createWithSpriteFrameName("gj_discordIcon_001-uhd.png"), this, menu_selector(SharingEndLevelLayer::onOpenTheDiscordAppOrSomething));
+		discordButton->setID("discord-button"_spr);
+		menu->addChild(discordButton);
 		menu->updateLayout();
 	}
 	void addMastodon(CCMenu *menu) {
@@ -160,7 +172,7 @@ class $modify(SharingEndLevelLayer, EndLevelLayer) {
 	}
 	void onMastodon(CCObject*) {
 		if (isDisabled("mastodon")) return;
-		geode::createQuickPopup("WarbledCompletions", fmt::format("Would you like to post this completion in <ca>{}</c>?", getString("mastodonInstance")), "No", "Yes", [=](auto, bool mastodon) {
+		geode::createQuickPopup("WarbledCompletions", fmt::format("Would you like to post this completion in <ca>{}</c>, a <ca>Mastodon</c> instance?", getString("mastodonInstance")), "No", "Yes", [=](auto, bool mastodon) {
 			if (mastodon) shareCompletionTo("mastodon");
 		});
 	}
@@ -170,11 +182,32 @@ class $modify(SharingEndLevelLayer, EndLevelLayer) {
 			if (reddit) shareCompletionTo("reddit");
 		});
 	}
+	void onOpenTheDiscordAppOrSomething(CCObject*) {
+		if (isDisabled("discord")) return;
+		geode::createQuickPopup("WarbledCompletions", "Would you like to open <cb>Discord</c> to share your completion?\n\n<cy>WarbledCompletions is not responsible for any damages (tangible or otherwise) if Discord's \"Streamer Mode\" is not active.</c>", "No", "Yes", [=](auto, bool discord) {
+			if (!discord) return;
+			if (getPath("discordApp").string().empty()) return showDiscordFailurePopup();
+			std::filesystem::path discordPath = getPath("discordApp");
+			std::string discordPathFixed, command;
+			#ifdef GEODE_IS_WINDOWS
+			discordPathFixed = geode::utils::string::wideToUtf8(discordPath);
+			if (!utils::string::endsWith(discordPathFixed, ".exe")) return showDiscordFailurePopup();
+			command = fmt::format("start {}", discordPathFixed);
+			#elif defined(GEODE_IS_MACOS)
+			discordPathFixed = discordPath.string();
+			if (!utils::string::endsWith(discordPathFixed, ".app")) return showDiscordFailurePopup();
+			command = fmt::format("open {}", discordPathFixed);
+			#endif
+			if (!utils::string::contains(discordPathFixed, "Discord") && !utils::string::contains(discordPathFixed, "Vesktop")) return showDiscordFailurePopup();
+			if (!utils::string::contains(discordPathFixed, "Discord.") && !utils::string::contains(discordPathFixed, "DiscordPTB.") && !utils::string::contains(discordPathFixed, "DiscordCanary.")) return showDiscordFailurePopup();
+			system(command.c_str());
+		});
+	}
 	void onWeb(CCObject*) {
 		if (getString("customURL").empty() || !getBool("enabled")) return;
 		geode::createQuickPopup("WarbledCompletions", fmt::format("Would you like to share your completion <cb>elsewhere</c>?\n\n<cy>If you choose this option, you are responsible for the contents of the web page you chose:</c>\n\n<cl>{}</c>", getString("customURL")), "No", "Yes", [=](auto, bool web) {
 			if (!web) return;
-			web::openLinkInBrowser(fmt::format("https://{}", getString("customURL")));
+			geode::utils::web::openLinkInBrowser(fmt::format("https://{}", getString("customURL")));
 		});
 	}
 	// adapted from code by TheSillyDoggo (she/her): https://discord.com/channels/911701438269386882/911702535373475870/1291198134013394946
@@ -240,6 +273,7 @@ class $modify(SharingEndLevelLayer, EndLevelLayer) {
 		addRedditIfNotRobTopLevel(menu);
 		addBluesky(menu);
 		addMastodon(menu);
+		addDiscord(menu);
 		addWeb(menu);
 		addScreenshot(menu);
 		if (menu->getChildrenCount() < 2) menu->removeMeAndCleanup();
