@@ -122,7 +122,7 @@ class $modify(SharingEndLevelLayer, EndLevelLayer) {
 		system(command.c_str());
 	}
 	void addScreenshot(CCMenu *menu) {
-		if (!getBool("enabled")) return;
+		if (isDisabled("screenshot")) return;
 		auto screenshotButton = CCMenuItemSpriteExtra::create(CCSprite::createWithSpriteFrameName("screenshot.png"_spr), this, menu_selector(SharingEndLevelLayer::onScreenshot));
 		screenshotButton->setID("screenshot-button"_spr);
 		menu->addChild(screenshotButton);
@@ -222,7 +222,7 @@ class $modify(SharingEndLevelLayer, EndLevelLayer) {
 	// adapted from code by TheSillyDoggo (she/her): https://discord.com/channels/911701438269386882/911702535373475870/1291198134013394946
 	// original code: https://raw.githubusercontent.com/TheSillyDoggo/Screenshot-Mod/main/src/main.cpp
 	void onScreenshot(CCObject*) {
-		if (!getBool("enabled")) return;
+		if (isDisabled("screenshot")) return;
 		if (!m_playLayer || !m_playLayer->m_level) return showScreenshotFailurePopup();
 		const auto &pl = m_playLayer;
 		const auto &level = m_playLayer->m_level;

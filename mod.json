@@ -18,6 +18,11 @@
 			"type": "bool",
 			"default": true
 		},
+		"screenshot": {
+			"name": "Screenshot Button",
+			"type": "bool",
+			"default": true
+		},
 		"skipConfirmation": {
 			"name": "Skip Confirmation Prompts",
 			"description": "Skip all confirmation prompts.\n\n<cy>By enabling this, you agree that:</c>\n<cy>- You have enabled Streamer Mode on Discord, if you choose to open Discord after a level completion</c>\n<cy>- You have chosen a valid Mastodon instance to share your completions to</c>\n<cy>- You are aware that screenshots are stored in this mod's config directory, and not automatically copied to your clipboard.</c>",
