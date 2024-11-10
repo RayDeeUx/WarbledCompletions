@@ -97,6 +97,9 @@
 		"spritesheets": {
 			"OtherSocialMediaButtons": [
 				"resources/socialMedia/*.png"
+			],
+			"ButtonAssets": [
+				"resources/assets/*.png"
 			]
 		}
 	},

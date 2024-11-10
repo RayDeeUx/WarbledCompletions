@@ -1,3 +1,9 @@
 [submodule "clip"]
 	path = clip
 	url = https://github.com/dacap/clip.git
+[submodule "libpng"]
+	path = libpng
+	url = https://github.com/pnggroup/libpng.git
+[submodule "fpng"]
+	path = fpng
+	url = https://github.com/richgel999/fpng.git

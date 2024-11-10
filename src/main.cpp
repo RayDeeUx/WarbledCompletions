@@ -1,10 +1,21 @@
 #include <Geode/modify/EndLevelLayer.hpp>
 #include <Geode/utils/web.hpp>
-#include "../clip/clip.h"
 
 #define PREFERRED_HOOK_PRIO (-2123456789)
+#define CLIP_ENABLE_IMAGE
+#define CLIP_X11_WITH_PNG
+
+/*
+TODO
+- BRIFT CAMERA SPRITE CREDITS
+- COLON BLUESKY SPRITE CREDITS
+- ALPHALANEOUS BLUESKY SPRITE CREDITS
+- DASSHU GLOBE SPRITE CREDITS
+*/
 
 using namespace geode::prelude;
+
+const std::string &configDir = Mod::get()->getConfigDir().string();
 
 class $modify(SharingEndLevelLayer, EndLevelLayer) {
 	static void onModify(auto& self) {
@@ -74,6 +85,16 @@ class $modify(SharingEndLevelLayer, EndLevelLayer) {
 				));
 			}
 		}
+	}
+	static void showScreenshotFailurePopup() {
+		return FLAlertLayer::create("WarbledCompletions Error!", "There was an error while taking a screenshot.", "Oof...")->show();
+	}
+	void addScreenshot(CCMenu *menu) {
+		if (!getBool("enabled")) return;
+		auto screenshotButton = CCMenuItemSpriteExtra::create(CCSprite::createWithSpriteFrameName("screenshot.png"_spr), this, menu_selector(SharingEndLevelLayer::onScreenshot));
+		screenshotButton->setID("screenshot-button"_spr);
+		menu->addChild(screenshotButton);
+		menu->updateLayout();
 	}
 	void addWeb(CCMenu *menu) {
 		if (getString("customURL").empty() || !getBool("enabled")) return;
@@ -146,6 +167,54 @@ class $modify(SharingEndLevelLayer, EndLevelLayer) {
 			web::openLinkInBrowser(fmt::format("https://{}", getString("customURL")));
 		});
 	}
+	// adapted from code by TheSillyDoggo (she/her): https://discord.com/channels/911701438269386882/911702535373475870/1291198134013394946
+	// original code: https://raw.githubusercontent.com/TheSillyDoggo/Screenshot-Mod/main/src/main.cpp
+	// also uses https://github.com/dacap/clip library, licensed under MIT License
+	void onScreenshot(CCObject*) {
+		CCScene* scene = CCDirector::sharedDirector()->getRunningScene();
+		int width = static_cast<int>(scene->getContentWidth());
+		int height = static_cast<int>(scene->getContentHeight());
+		CCRenderTexture* renderTexture = CCRenderTexture::create(width, height);
+
+		// Send data to renderTexture for captured image
+		this->getChildByIDRecursive("look-i-did-it-menu"_spr)->setVisible(false);
+		renderTexture->begin();
+		scene->visit();
+		renderTexture->end();
+		this->getChildByIDRecursive("look-i-did-it-menu"_spr)->setVisible(true);
+
+		// Get the captured image
+		CCImage* image = renderTexture->newCCImage();
+
+		// Save the image to file
+		if (!image) return showScreenshotFailurePopup();
+		const char* filePath = fmt::format("{}/{}.png", configDir, numToString<int>(m_playLayer->m_level->m_levelID.value())).c_str();
+		image->saveToFile(filePath);
+
+		// Set clipboard data
+		const auto data = image->getData();
+		#ifdef GEODE_IS_WINDOWS
+		auto bitmap = CreateBitmap(width, height, 1, 32, data);
+		if (OpenClipboard(nullptr)) {
+			if (EmptyClipboard()) {
+				SetClipboardData(CF_BITMAP, bitmap);
+				CloseClipboard();
+			}
+		}
+		#else defined(GEODE_IS_MACOS)
+		NSImage * image = [[NSImage alloc] initWithCGImage:cgImg size:NSMakeSize(width, height)];
+		if (image != nil) {
+			NSPasteboard *pasteboard = [NSPasteboard generalPasteboard];
+			[pasteboard clearContents];
+			NSArray *copiedObjects = [NSArray arrayWithObject:image];
+			[pasteboard writeObjects:copiedObjects];
+		}
+		#endif
+
+		// Release image
+		image->release();
+		// std::filesystem::remove(filePath);
+	}
 	void customSetup() {
 		EndLevelLayer::customSetup();
 		if (!getBool("enabled")) return;
@@ -168,6 +237,7 @@ class $modify(SharingEndLevelLayer, EndLevelLayer) {
 		addBluesky(menu);
 		addMastodon(menu);
 		addWeb(menu);
+		addScreenshot(menu);
 		if (menu->getChildrenCount() < 2) menu->removeMeAndCleanup();
 	}
 };
