@@ -30,18 +30,6 @@
 			"type": "bool",
 			"default": true
 		},
-		"reddit": {
-			"name": "Share to r/GeometryDash",
-			"description": "Enable sharing your completion to <co>r/geometrydash</c>.\n\n<cy>This setting is designed to be as compliant to</c> <co>r/geometrydash's Rule 3</c> <cy>as possible;</c> <co>Reddit</c> <cy>is not an option when completing RobTop's levels.</c> <cr>Video and/or screenshot evidence of your completion is still mandatory per r/geometrydash rules!</c>",
-			"type": "bool",
-			"default": true
-		},
-		"useSHReddit": {
-			"name": "Use sh.reddit.com",
-			"description": "Disabling this setting will share your completions through <co>new.reddit.com</c> instead of <co>sh.reddit.com</c>.\n\n<cy>This setting is available for those who are allergic to</c> <co>Reddit</c><cy>'s most recent iteration of UI design. By disabling this, you will be gently reminded to switch the type of your post to</c> <cl>\"Images & Video\"</c> <cy>to best comply with</c> <co>r/geometrydash</c><cy>'s rules.</c>",
-			"type": "bool",
-			"default": true
-		},
 		"blueskyStyle": {
 			"name": "Bluesky Button Style",
 			"type": "string",
@@ -52,6 +40,31 @@
 				"Colon",
 				"Media Kit"
 			]
+		},
+		"reddit": {
+			"name": "Share to r/GeometryDash",
+			"description": "Enable sharing your completion to <co>r/geometrydash</c>.\n\n<cy>This setting is designed to be as compliant to</c> <co>r/geometrydash's Rule 3</c> <cy>as possible;</c> <co>Reddit</c> <cy>is not an option when completing RobTop's levels.</c> <cr>Video and/or screenshot evidence of your completion is still mandatory per r/geometrydash rules!</c>",
+			"type": "bool",
+			"default": true
+		},
+		"useSHReddit": {
+			"name": "Use sh.reddit.com instead of new.reddit.com",
+			"description": "Disabling this setting will share your completions through <co>new.reddit.com</c> instead of <co>sh.reddit.com</c>.\n\n<cy>This setting is available for those who are allergic to</c> <co>Reddit</c><cy>'s most recent iteration of UI design. By disabling this, you will be gently reminded to switch the type of your post to</c> <cl>\"Images & Video\"</c> <cy>to best comply with</c> <co>r/geometrydash</c><cy>'s rules.</c>",
+			"type": "bool",
+			"default": true
+		},
+		"mastodon": {
+			"name": "Share to Mastodon",
+			"description": "Enable sharing your completion to <ca>mastodon.social</c>.",
+			"type": "bool",
+			"default": true
+		},
+		"mastodonInstance": {
+			"name": "Mastodon Instance",
+			"description": "Include your preferred <ca>mastodon.social</c> instance here.",
+			"type": "string",
+			"default": "mastodon.social",
+			"match": "^[\\S]+\\.[\\S]+$"
 		},
 		"customURL": {
 			"name": "Custom URL",

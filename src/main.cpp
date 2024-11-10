@@ -13,6 +13,9 @@ class $modify(SharingEndLevelLayer, EndLevelLayer) {
 	bool getBool(const std::string_view key) {
 		return Mod::get()->getSettingValue<bool>(key);
 	}
+	bool isDisabled(const std::string_view key) {
+		return !getBool(key) || !getBool("enabled");
+	}
 	std::string getString(const std::string_view key) {
 		return Mod::get()->getSettingValue<std::string>(key);
 	}
@@ -26,11 +29,28 @@ class $modify(SharingEndLevelLayer, EndLevelLayer) {
 		for (int i = 0; i < levelName.length(); i++) {
 			if (levelName[i] == ' ') {
 				if (mode == "twitter" || mode == "bluesky") levelName.replace(i, 1, "%20");
-				else if (mode == "reddit") levelName.replace(i, 1, "+");
+				else levelName.replace(i, 1, "+");
 			}
 		}
 		if (mode == "twitter") {
 			web::openLinkInBrowser(fmt::format("https://twitter.com/intent/tweet?text=I%20just%20completed%20{}%20by%20{}%20in%20{}%20attempt{}%21%20If%20you%20want%20to%20try%20it,%20the%20ID%20is%20{}.",
+				levelName,
+				creatorName,
+				attempts,
+				pluralOrNot,
+				levelID
+			));
+		} else if (mode == "bluesky") {
+			web::openLinkInBrowser(fmt::format("https://bsky.app/intent/compose?text=I%20just%20completed%20{}%20by%20{}%20in%20{}%20attempt{}%21%20If%20you%20want%20to%20try%20it,%20the%20ID%20is%20{}.",
+				levelName,
+				creatorName,
+				attempts,
+				pluralOrNot,
+				levelID
+			));
+		} else if (mode == "mastodon") {
+			web::openLinkInBrowser(fmt::format("https://{}/share?text=I+just+completed+{}+by+{}+in+{}+attempt{}%21+If+you+want+to+try+it,+the+ID+is+{}.",
+				getString("mastodonInstance"),
 				levelName,
 				creatorName,
 				attempts,
@@ -53,14 +73,6 @@ class $modify(SharingEndLevelLayer, EndLevelLayer) {
 					levelID
 				));
 			}
-		} else if (mode == "bluesky") {
-			web::openLinkInBrowser(fmt::format("https://bsky.app/intent/compose?text=I%20just%20completed%20{}%20by%20{}%20in%20{}%20attempt{}%21%20If%20you%20want%20to%20try%20it,%20the%20ID%20is%20{}.",
-				levelName,
-				creatorName,
-				attempts,
-				pluralOrNot,
-				levelID
-			));
 		}
 	}
 	void addWeb(CCMenu *menu) {
@@ -70,8 +82,15 @@ class $modify(SharingEndLevelLayer, EndLevelLayer) {
 		menu->addChild(webButton);
 		menu->updateLayout();
 	}
+	void addMastodon(CCMenu *menu) {
+		if (isDisabled("mastodon")) return;
+		auto mastodonButton = CCMenuItemSpriteExtra::create(CCSprite::createWithSpriteFrameName("mastodon.png"_spr), this, menu_selector(SharingEndLevelLayer::onMastodon));
+		mastodonButton->setID("mastodon-button"_spr);
+		menu->addChild(mastodonButton);
+		menu->updateLayout();
+	}
 	void addBluesky(CCMenu *menu) {
-		if (!getBool("bluesky") || !getBool("enabled")) return;
+		if (isDisabled("bluesky")) return;
 		CCSprite* blueskySprite = CCSprite::createWithSpriteFrameName("blueskyAlt.png"_spr);
 		const std::string &blueskyStyle = getString("blueskyStyle");
 		if (blueskyStyle == "Media Kit") blueskySprite = CCSprite::createWithSpriteFrameName("bluesky.png"_spr);
@@ -83,33 +102,39 @@ class $modify(SharingEndLevelLayer, EndLevelLayer) {
 		menu->updateLayout();
 	}
 	void addRedditIfNotRobTopLevel(CCMenu *menu) {
-		if (!getBool("reddit") || !getBool("enabled") || m_playLayer->m_level->m_levelType == GJLevelType::Local) return;
+		if (isDisabled("reddit") || m_playLayer->m_level->m_levelType == GJLevelType::Local) return;
 		auto redditButton = CCMenuItemSpriteExtra::create(CCSprite::createWithSpriteFrameName("gj_rdIcon_001.png"), this, menu_selector(SharingEndLevelLayer::onReddit));
 		redditButton->setID("reddit-button"_spr);
 		menu->addChild(redditButton);
 		menu->updateLayout();
 	}
 	void addTwitter(CCMenu *menu) {
-		if (!getBool("twitter") || !getBool("enabled")) return;
+		if (isDisabled("twitter")) return;
 		auto tweetButton = CCMenuItemSpriteExtra::create(CCSprite::createWithSpriteFrameName("gj_twIcon_001.png"), this, menu_selector(SharingEndLevelLayer::onTweet));
 		tweetButton->setID("tweet-button"_spr);
 		menu->addChild(tweetButton);
 		menu->updateLayout();
 	}
 	void onTweet(CCObject*) {
-		if (!getBool("twitter") || !getBool("enabled")) return;
+		if (isDisabled("twitter")) return;
 		geode::createQuickPopup("WarbledCompletions", "Would you like to <cj>Tweet</c> this completion?", "No", "Yes", [=](auto, bool tweet) {
 			if (tweet) shareCompletionTo("twitter");
 		});
 	}
 	void onBluesky(CCObject*) {
-		if (!getBool("bluesky") || !getBool("enabled")) return;
+		if (isDisabled("bluesky")) return;
 		geode::createQuickPopup("WarbledCompletions", "Would you like to post this completion to <cl>Bluesky</c>?", "No", "Yes", [=](auto, bool bluesky) {
 			if (bluesky) shareCompletionTo("bluesky");
 		});
 	}
+	void onMastodon(CCObject*) {
+		if (isDisabled("mastodon")) return;
+		geode::createQuickPopup("WarbledCompletions", fmt::format("Would you like to post this completion in <ca>{}</c>?", getString("mastodonInstance")), "No", "Yes", [=](auto, bool mastodon) {
+			if (mastodon) shareCompletionTo("mastodon");
+		});
+	}
 	void onReddit(CCObject*) {
-		if (!getBool("reddit") || !getBool("enabled") || m_playLayer->m_level->m_levelType == GJLevelType::Local) return;
+		if (isDisabled("reddit") || m_playLayer->m_level->m_levelType == GJLevelType::Local) return;
 		geode::createQuickPopup("WarbledCompletions", "Would you like to post this completion in <co>r/geometrydash</c>?\n\n<cy>Remember to include video/screenshot evidence of your completion!</c>", "No", "Yes", [=](auto, bool reddit) {
 			if (reddit) shareCompletionTo("reddit");
 		});
