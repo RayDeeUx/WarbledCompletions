@@ -120,7 +120,7 @@ class $modify(SharingEndLevelLayer, EndLevelLayer) {
 	}
 	void addDiscord(CCMenu *menu) {
 		if (isDisabled("discord") || getPath("discordApp").empty()) return;
-		auto discordButton = CCMenuItemSpriteExtra::create(CCSprite::createWithSpriteFrameName("gj_discordIcon_001-uhd.png"), this, menu_selector(SharingEndLevelLayer::onOpenTheDiscordAppOrSomething));
+		auto discordButton = CCMenuItemSpriteExtra::create(CCSprite::createWithSpriteFrameName("gj_discordIcon_001.png"), this, menu_selector(SharingEndLevelLayer::onOpenTheDiscordAppOrSomething));
 		discordButton->setID("discord-button"_spr);
 		menu->addChild(discordButton);
 		menu->updateLayout();
@@ -198,8 +198,7 @@ class $modify(SharingEndLevelLayer, EndLevelLayer) {
 			if (!utils::string::endsWith(discordPathFixed, ".app")) return showDiscordFailurePopup();
 			command = fmt::format("open {}", discordPathFixed);
 			#endif
-			if (!utils::string::contains(discordPathFixed, "Discord") && !utils::string::contains(discordPathFixed, "Vesktop")) return showDiscordFailurePopup();
-			if (!utils::string::contains(discordPathFixed, "Discord.") && !utils::string::contains(discordPathFixed, "DiscordPTB.") && !utils::string::contains(discordPathFixed, "DiscordCanary.")) return showDiscordFailurePopup();
+			if (!utils::string::contains(discordPathFixed, "Discord.") && !utils::string::contains(discordPathFixed, "DiscordPTB.") && !utils::string::contains(discordPathFixed, "DiscordCanary.") && !utils::string::contains(discordPathFixed, "Vesktop")) return showDiscordFailurePopup();
 			system(command.c_str());
 		});
 	}
