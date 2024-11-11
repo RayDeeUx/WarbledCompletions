@@ -25,7 +25,7 @@
 		},
 		"skipConfirmation": {
 			"name": "Skip Confirmation Prompts",
-			"description": "Skip all confirmation prompts.\n\n<cy>By enabling this, you agree that:</c>\n<cy>- You have enabled Streamer Mode on Discord, if you choose to open Discord after a level completion</c>\n<cy>- You have chosen a valid Mastodon instance to share your completions to</c>\n<cy>- You are aware that screenshots are stored in this mod's config directory, and not automatically copied to your clipboard.</c>",
+			"description": "Skip all confirmation prompts.\n\n<cy>By enabling this, you agree that the following are true:</c>\n<cy>- Streamer Mode in Discord is active, and the Discord app you've selected is valid</c>\n<cy>- You have specified a valid Mastodon instance to share completions to</c>\n<cy>- You understand that screenshots are only stored in this mod's config directory</c>",
 			"type": "bool",
 			"default": false
 		},
@@ -84,7 +84,7 @@
 			"default": true
 		},
 		"discordApp": {
-			"name": "Discord",
+			"name": "Discord App to Open",
 			"description": "Which <cb>Discord</c> app would you like to open?\n\n<cy>Vesktop is also supported.</c>",
 			"type": "file",
 			"default": "",

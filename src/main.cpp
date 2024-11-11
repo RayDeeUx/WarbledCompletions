@@ -256,7 +256,8 @@ class $modify(SharingEndLevelLayer, EndLevelLayer) {
 		// Release image
 		image->release();
 
-		geode::createQuickPopup("WarbledCompletions", "Screenshot complete! Would you like to open the location of your screenshot?\n\n<cy>(Copying a screenshot to your clipboard for copy-pasting isn't as easy as it sounds.)</c>", "No", "Yes", [=](auto, bool configDir) {
+		std::string message = !Loader::get()->isModInstalled("ninxout.prntscrn") ? "Copying a screenshot to your clipboard for copy-pasting isn't as easy as it sounds." : "Y'know, you could've done that exact same thing with ninXout's PRNTSCRN mod...";
+		geode::createQuickPopup("WarbledCompletions", fmt::format("Screenshot complete! Would you like to open the location of your screenshot?\n\n<cy>({})</c>", message), "No", "Yes", [=](auto, bool configDir) {
 			if (!configDir) return;
 			geode::utils::file::openFolder(configDirPath);
 		});
