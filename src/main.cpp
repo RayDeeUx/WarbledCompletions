@@ -1,17 +1,10 @@
 #include <Geode/modify/EndLevelLayer.hpp>
 #include <Geode/utils/web.hpp>
+#ifdef __APPLE__
+#include "main.hpp"
+#endif
 
 #define PREFERRED_HOOK_PRIO (-2123456789)
-#define CLIP_ENABLE_IMAGE
-#define CLIP_X11_WITH_PNG
-
-/*
-TODO
-- BRIFT CAMERA SPRITE CREDITS
-- COLON BLUESKY SPRITE CREDITS
-- ALPHALANEOUS BLUESKY SPRITE CREDITS
-- DASSHU GLOBE SPRITE CREDITS
-*/
 
 using namespace geode::prelude;
 
@@ -244,15 +237,28 @@ class $modify(SharingEndLevelLayer, EndLevelLayer) {
 		// Save the image to file
 		if (!image) return showScreenshotFailurePopup();
 		std::string levelID = level->m_levelID.value() == 0 ? "Custom level" : std::to_string(level->m_levelID.value());
-		const char* filePath = fmt::format(
+		std::string filePath = fmt::format(
 			"{}/{} by {} [{}] ({}).png",
 			configDir,
 			std::string(level->m_levelName),
 			std::string(level->m_creatorName),
 			levelID,
 			std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count()
-		).c_str();
-		image->saveToFile(filePath);
+		);
+		// save image to file
+		#ifndef __APPLE__
+		/*
+		from justin:
+		@ery • 埃里曼索斯 i found the function but there is one problem
+
+		***there is zero functionality for it***
+		https://discord.com/channels/911701438269386882/911702535373475870/1305405118354690139
+		*/
+		image->saveToFile(filePath.c_str());
+		#else
+		godFuckingDamnIt(image, filePath.c_str(), width, height);
+		#endif
+
 		// Release image
 		image->release();
 
