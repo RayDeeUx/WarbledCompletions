@@ -1,8 +1,5 @@
 #include <Geode/modify/EndLevelLayer.hpp>
 #include <Geode/utils/web.hpp>
-#ifdef __APPLE__
-#include "main.hpp"
-#endif
 
 #define PREFERRED_HOOK_PRIO (-2123456789)
 
@@ -185,7 +182,7 @@ class $modify(SharingEndLevelLayer, EndLevelLayer) {
 	void onMastodon(CCObject*) {
 		if (isDisabled("mastodon")) return;
 		if (getBool("skipConfirmation")) return shareCompletionTo("mastodon");
-		geode::createQuickPopup("WarbledCompletions", fmt::format("Would you like to post this completion in <ca>{}</c>, a <ca>Mastodon</c> instance?", getString("mastodonInstance")), "No", "Yes", [=](auto, bool mastodon) {
+		geode::createQuickPopup("WarbledCompletions", fmt::format("Would you like to post this completion in <ca>{}</c>, which is hopefully a <ca>Mastodon</c> instance?", getString("mastodonInstance")), "No", "Yes", [=](auto, bool mastodon) {
 			if (mastodon) shareCompletionTo("mastodon");
 		});
 	}
@@ -219,6 +216,16 @@ class $modify(SharingEndLevelLayer, EndLevelLayer) {
 		if (!m_playLayer || !m_playLayer->m_level) return showScreenshotFailurePopup();
 		const auto &pl = m_playLayer;
 		const auto &level = m_playLayer->m_level;
+		std::string levelID = level->m_levelID.value() == 0 ? "Custom level" : std::to_string(level->m_levelID.value());
+		std::string filePath = fmt::format(
+			"{}/{} by {} [{}] ({}).png",
+			configDir,
+			std::string(level->m_levelName),
+			std::string(level->m_creatorName),
+			levelID,
+			std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count()
+		);
+		#ifndef __APPLE__
 		CCScene* scene = CCDirector::sharedDirector()->getRunningScene();
 		int width = static_cast<int>(scene->getContentWidth());
 		int height = static_cast<int>(scene->getContentHeight());
@@ -236,28 +243,7 @@ class $modify(SharingEndLevelLayer, EndLevelLayer) {
 
 		// Save the image to file
 		if (!image) return showScreenshotFailurePopup();
-		std::string levelID = level->m_levelID.value() == 0 ? "Custom level" : std::to_string(level->m_levelID.value());
-		std::string filePath = fmt::format(
-			"{}/{} by {} [{}] ({}).png",
-			configDir,
-			std::string(level->m_levelName),
-			std::string(level->m_creatorName),
-			levelID,
-			std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count()
-		);
-		// save image to file
-		#ifndef __APPLE__
-		/*
-		from justin:
-		@ery • 埃里曼索斯 i found the function but there is one problem
-
-		***there is zero functionality for it***
-		https://discord.com/channels/911701438269386882/911702535373475870/1305405118354690139
-		*/
 		image->saveToFile(filePath.c_str());
-		#else
-		godFuckingDamnIt(image, filePath.c_str(), width, height);
-		#endif
 
 		// Release image
 		image->release();
@@ -267,6 +253,29 @@ class $modify(SharingEndLevelLayer, EndLevelLayer) {
 			if (!configDir) return;
 			geode::utils::file::openFolder(configDirPath);
 		});
+		#else
+		// save image to file
+		/*
+		from justin:
+		@ery • 埃里曼索斯 i found the function [address on macOS] but there is one problem
+
+		***there is zero functionality for it***
+		https://discord.com/channels/911701438269386882/911702535373475870/1305405118354690139
+		*/
+		if (CCKeyboardDispatcher::get()->getShiftKeyPressed()) {
+			system("screencapture -wxoc -tpng");
+			FLAlertLayer::create("WarbledCompletions", "Screenshot complete! It should be on your clipboard now.", "OK")->show();
+		} else {
+			// escape chars or else terminal cmd fails
+			filePath = utils::string::replace(utils::string::replace(utils::string::replace(utils::string::replace(utils::string::replace(filePath, " ", "\\ "), "(", "\\("), ")", "\\)"), "[", "\\["), "]", "\\]");
+			system(fmt::format("screencapture -wxo -tpng {}", filePath).c_str());
+			std::string message = !Loader::get()->isModInstalled("ninxout.prntscrn") ? "Pro tip: Hold the SHIFT key to send screenshots directly to your clipboard,</c> <co>instead of saving the screenshot to the config folder!</c><cy>" : "Y'know, you could've done that exact same thing with ninXout's PRNTSCRN mod...";
+			geode::createQuickPopup("WarbledCompletions", fmt::format("Screenshot complete! Would you like to open the location of your screenshot?\n\n<cy>({})</c>", message), "No", "Yes", [=](auto, bool configDir) {
+				if (!configDir) return;
+				geode::utils::file::openFolder(configDirPath);
+			});
+		}
+		#endif
 	}
 	void customSetup() {
 		EndLevelLayer::customSetup();
