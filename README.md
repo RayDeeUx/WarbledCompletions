@@ -16,7 +16,7 @@ WarbledCompletions also comes with a screenshot shortcut in case you want to get
 - For <c-00adef>Windows</c> and <cg>Android</c> users, the mod will prompt you to open the folder containing your screenshot, because copying images to your clipboard is a lot harder to accomplish than it sounds.
 - For <c-cdcdcd>macOS</c> <c-2e88d6>Seq</c><c-f7a865>uoia</c> (or lower) users, you can hold the <c-2e88d6>SHI</c><c-f7a865>FT</c> key to take a screenshot that gets sent directly to your clipboard.<c>*</c>
 
-<cy>*: For macOS users, a full game restart may be required, so don't wait until you finish an Extreme Demon to use the screenshot shortcut. Every 30 days starting from your first screenshot with WarbledCompletions, macOS will prompt you to give permission to Geometry Dash to "record this computer's screen and audio" via System Preferences. The specific commands being run are `screencapture -wxoc -tpng` to copy screenshots to your clipboard and `screencapture -wxo -tpng {fileName}` to send screenshots to the mod's config directory.</c>
+<cy>*: For macOS users, a full game restart may be required, so don't wait until you finish an Extreme Demon to use the screenshot shortcut. More info [here](https://web.archive.org/web/20240722142149/https://support.apple.com/guide/mac-help/control-access-screen-system-audio-recording-mchld6aa7d23/mac) and [here](https://web.archive.org/web/20240721171349/https://ss64.com/mac/screencapture.html). Everything is done on-device.</c>
 
 Additional credits:
 - nin</c><c-00ff00>X</c><c-0000ff>out</c> for insisting that I re-use his code for saving images on macOS (even though I ended up finding other options)
