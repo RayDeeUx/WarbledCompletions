@@ -44,9 +44,9 @@
 		"blueskyStyle": {
 			"name": "Bluesky Button Style",
 			"type": "string",
-			"default": "Default",
+			"default": "Twitr (Default)",
 			"one-of": [
-				"Twitr",
+				"Twitr (Default)",
 				"Alphalaneous",
 				"Colon",
 				"Media Kit"
@@ -81,7 +81,8 @@
 			"name": "Share to Discord",
 			"description": "Enable sharing your completion to <cb>Discord</c>.",
 			"type": "bool",
-			"default": true
+			"default": true,
+			"platforms": [ "win", "mac" ]
 		},
 		"discordApp": {
 			"name": "Discord App to Open",
