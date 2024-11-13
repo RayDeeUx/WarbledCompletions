@@ -11,6 +11,8 @@ Share your Geometry Dash level completions/verifications in as few clicks as pos
 - <cr>[Windows/macOS ONLY]</c> <cb>Discord</c> (choose the <cb>Discord</c> app to open in mod settings)
 - <cy>Any website of your own! (Preferably a website that is SFW and geared towards making posts, but I can't stop you.)</c>
 
+<cy>(While WarbledCompletions works and is available on Android, all buttons open in your preferred web browser.)</c> 
+
 WarbledCompletions also comes with a screenshot shortcut button in case you want to get an in-game screenshot while playing in Windowed mode.
 
 - For <c-00adef>Windows</c> and <cg>Android</c> users, the mod will prompt you to open the folder containing your screenshot, because copying images to your clipboard is a lot harder to accomplish than it sounds.

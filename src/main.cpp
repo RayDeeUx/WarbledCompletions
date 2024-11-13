@@ -9,6 +9,9 @@ const std::filesystem::path &configDirPath = Mod::get()->getConfigDir();
 const std::string &configDir = configDirPath.string();
 
 class $modify(SharingEndLevelLayer, EndLevelLayer) {
+	struct Fields {
+		std::string filePath = "";
+	};
 	static void onModify(auto& self) {
 		(void) self.setHookPriority("EndLevelLayer::customSetup", PREFERRED_HOOK_PRIO);
 	}
@@ -209,15 +212,31 @@ class $modify(SharingEndLevelLayer, EndLevelLayer) {
 			geode::utils::web::openLinkInBrowser(fmt::format("https://{}", getString("customURL")));
 		});
 	}
+	void delayedClipboardScreenshot() {
+		// escape chars or else terminal cmd fails
+		std::string filePath = m_fields->filePath;
+		filePath = utils::string::replace(utils::string::replace(utils::string::replace(utils::string::replace(utils::string::replace(filePath, " ", "\\ "), "(", "\\("), ")", "\\)"), "[", "\\["), "]", "\\]");
+		system(fmt::format("screencapture -wxo -tpng {}", filePath).c_str());
+		std::string message = !Loader::get()->isModInstalled("ninxout.prntscrn") ? "Pro tip: Hold the SHIFT key while clicking the screenshot shortcut button to send screenshots directly to your clipboard,</c> <co>instead of saving the screenshot to the config folder!</c><cy>" : "Y'know, you could've done that exact same thing with ninXout's PRNTSCRN mod...";
+		geode::createQuickPopup("WarbledCompletions", fmt::format("Screenshot complete! Would you like to open the location of your screenshot?\n\n<cy>({})</c>", message), "No", "Yes", [=](auto, bool configDir) {
+			if (!configDir) return;
+			geode::utils::file::openFolder(configDirPath);
+		});
+		this->getChildByIDRecursive("look-i-did-it-menu"_spr)->setVisible(true);
+	}
+	void delayedConfigScreenshot() {
+		system("screencapture -wxoc -tpng");
+		FLAlertLayer::create("WarbledCompletions", "Screenshot complete! It should be on your clipboard now.", "OK")->show();
+		this->getChildByIDRecursive("look-i-did-it-menu"_spr)->setVisible(true);
+	}
 	// adapted from code by TheSillyDoggo (she/her): https://discord.com/channels/911701438269386882/911702535373475870/1291198134013394946
 	// original code: https://raw.githubusercontent.com/TheSillyDoggo/Screenshot-Mod/main/src/main.cpp
 	void onScreenshot(CCObject*) {
 		if (isDisabled("screenshot")) return;
 		if (!m_playLayer || !m_playLayer->m_level) return showScreenshotFailurePopup();
-		const auto &pl = m_playLayer;
 		const auto &level = m_playLayer->m_level;
 		std::string levelID = level->m_levelID.value() == 0 ? "Custom level" : std::to_string(level->m_levelID.value());
-		std::string filePath = fmt::format(
+		m_fields->filePath = fmt::format(
 			"{}/{} by {} [{}] ({}).png",
 			configDir,
 			std::string(level->m_levelName),
@@ -263,17 +282,11 @@ class $modify(SharingEndLevelLayer, EndLevelLayer) {
 		https://discord.com/channels/911701438269386882/911702535373475870/1305405118354690139
 		*/
 		if (CCKeyboardDispatcher::get()->getShiftKeyPressed()) {
-			system("screencapture -wxoc -tpng");
-			FLAlertLayer::create("WarbledCompletions", "Screenshot complete! It should be on your clipboard now.", "OK")->show();
+			this->getChildByIDRecursive("look-i-did-it-menu"_spr)->setVisible(false);
+			this->scheduleOnce(schedule_selector(SharingEndLevelLayer::delayedConfigScreenshot), 0.017f); // 1.f / 60.f ==> 0.016666666666666666666666
 		} else {
-			// escape chars or else terminal cmd fails
-			filePath = utils::string::replace(utils::string::replace(utils::string::replace(utils::string::replace(utils::string::replace(filePath, " ", "\\ "), "(", "\\("), ")", "\\)"), "[", "\\["), "]", "\\]");
-			system(fmt::format("screencapture -wxo -tpng {}", filePath).c_str());
-			std::string message = !Loader::get()->isModInstalled("ninxout.prntscrn") ? "Pro tip: Hold the SHIFT key while clicking the screenshot shortcut button to send screenshots directly to your clipboard,</c> <co>instead of saving the screenshot to the config folder!</c><cy>" : "Y'know, you could've done that exact same thing with ninXout's PRNTSCRN mod...";
-			geode::createQuickPopup("WarbledCompletions", fmt::format("Screenshot complete! Would you like to open the location of your screenshot?\n\n<cy>({})</c>", message), "No", "Yes", [=](auto, bool configDir) {
-				if (!configDir) return;
-				geode::utils::file::openFolder(configDirPath);
-			});
+			this->getChildByIDRecursive("look-i-did-it-menu"_spr)->setVisible(false);
+			this->scheduleOnce(schedule_selector(SharingEndLevelLayer::delayedClipboardScreenshot), 0.017f);
 		}
 		#endif
 	}
