@@ -254,7 +254,7 @@ class $modify(SharingEndLevelLayer, EndLevelLayer) {
 			geode::utils::file::openFolder(configDirPath);
 		});
 		#else
-		// save image to file
+		// run macos terminal commands
 		/*
 		from justin:
 		@ery • 埃里曼索斯 i found the function [address on macOS] but there is one problem
