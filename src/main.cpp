@@ -262,7 +262,7 @@ class $modify(SharingEndLevelLayer, EndLevelLayer) {
 
 		// Save the image to file
 		if (!image) return showScreenshotFailurePopup();
-		image->saveToFile(filePath.c_str());
+		image->saveToFile(m_fields->filePath.c_str());
 
 		// Release image
 		image->release();
