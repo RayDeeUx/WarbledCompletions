@@ -314,5 +314,6 @@ class $modify(SharingEndLevelLayer, EndLevelLayer) {
 		addDiscord(menu);
 		addWeb(menu);
 		addScreenshot(menu);
+		if (menu->getChildrenCount() < 1) menu->removeMeAndCleanUp();
 	}
 };
