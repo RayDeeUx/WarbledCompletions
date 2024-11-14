@@ -171,35 +171,35 @@ class $modify(SharingEndLevelLayer, EndLevelLayer) {
 	void onTweet(CCObject*) {
 		if (isDisabled("twitter")) return;
 		if (getBool("skipConfirmation")) return shareCompletionTo("twitter");
-		geode::createQuickPopup("WarbledCompletions", "Would you like to <cj>Tweet</c> this completion?", "No", "Yes", [=](auto, bool tweet) {
+		geode::createQuickPopup("WarbledCompletions", "Would you like to <cj>Tweet</c> this completion?", "No", "Yes", [this](auto, bool tweet) {
 			if (tweet) shareCompletionTo("twitter");
 		});
 	}
 	void onBluesky(CCObject*) {
 		if (isDisabled("bluesky")) return;
 		if (getBool("skipConfirmation")) return shareCompletionTo("bluesky");
-		geode::createQuickPopup("WarbledCompletions", "Would you like to post this completion to <cl>Bluesky</c>?", "No", "Yes", [=](auto, bool bluesky) {
+		geode::createQuickPopup("WarbledCompletions", "Would you like to post this completion to <cl>Bluesky</c>?", "No", "Yes", [this](auto, bool bluesky) {
 			if (bluesky) shareCompletionTo("bluesky");
 		});
 	}
 	void onMastodon(CCObject*) {
 		if (isDisabled("mastodon")) return;
 		if (getBool("skipConfirmation")) return shareCompletionTo("mastodon");
-		geode::createQuickPopup("WarbledCompletions", fmt::format("Would you like to post this completion in <ca>{}</c>, which is hopefully a <ca>Mastodon</c> instance?", getString("mastodonInstance")), "No", "Yes", [=](auto, bool mastodon) {
+		geode::createQuickPopup("WarbledCompletions", fmt::format("Would you like to post this completion in <ca>{}</c>, which is hopefully a <ca>Mastodon</c> instance?", getString("mastodonInstance")), "No", "Yes", [this](auto, bool mastodon) {
 			if (mastodon) shareCompletionTo("mastodon");
 		});
 	}
 	void onReddit(CCObject*) {
 		if (isDisabled("reddit") || m_playLayer->m_level->m_levelType == GJLevelType::Local) return;
 		if (getBool("skipConfirmation")) return shareCompletionTo("reddit");
-		geode::createQuickPopup("WarbledCompletions", "Would you like to post this completion in <co>r/geometrydash</c>?\n\n<cy>Remember to include video/screenshot evidence of your completion!</c>", "No", "Yes", [=](auto, bool reddit) {
+		geode::createQuickPopup("WarbledCompletions", "Would you like to post this completion in <co>r/geometrydash</c>?\n\n<cy>Remember to include video/screenshot evidence of your completion!</c>", "No", "Yes", [this](auto, bool reddit) {
 			if (reddit) shareCompletionTo("reddit");
 		});
 	}
 	void onOpenTheDiscordAppOrSomething(CCObject*) {
 		if (isDisabled("discord")) return;
 		if (getBool("skipConfirmation")) return openDiscordHopefully();
-		geode::createQuickPopup("WarbledCompletions", "Would you like to open <cb>Discord</c> to share your completion?\n\n<cy>WarbledCompletions is not responsible for any damages (tangible or otherwise) if Discord's \"Streamer Mode\" is not active.</c>", "No", "Yes", [=](auto, bool discord) {
+		geode::createQuickPopup("WarbledCompletions", "Would you like to open <cb>Discord</c> to share your completion?\n\n<cy>WarbledCompletions is not responsible for any damages (tangible or otherwise) if Discord's \"Streamer Mode\" is not active.</c>", "No", "Yes", [this](auto, bool discord) {
 			if (!discord) return;
 			return openDiscordHopefully();
 		});
@@ -207,7 +207,7 @@ class $modify(SharingEndLevelLayer, EndLevelLayer) {
 	void onWeb(CCObject*) {
 		if (getString("customURL").empty() || !getBool("enabled")) return;
 		if (getBool("skipConfirmation")) return geode::utils::web::openLinkInBrowser(fmt::format("https://{}", getString("customURL")));
-		geode::createQuickPopup("WarbledCompletions", fmt::format("Would you like to share your completion <cb>elsewhere</c>?\n\n<cy>If you choose this option, you are responsible for the contents of the web page you chose:</c>\n\n<cl>{}</c>", getString("customURL")), "No", "Yes", [=](auto, bool web) {
+		geode::createQuickPopup("WarbledCompletions", fmt::format("Would you like to share your completion <cb>elsewhere</c>?\n\n<cy>If you choose this option, you are responsible for the contents of the web page you chose:</c>\n\n<cl>{}</c>", getString("customURL")), "No", "Yes", [this](auto, bool web) {
 			if (!web) return;
 			geode::utils::web::openLinkInBrowser(fmt::format("https://{}", getString("customURL")));
 		});
@@ -218,7 +218,7 @@ class $modify(SharingEndLevelLayer, EndLevelLayer) {
 		filePath = utils::string::replace(utils::string::replace(utils::string::replace(utils::string::replace(utils::string::replace(filePath, " ", "\\ "), "(", "\\("), ")", "\\)"), "[", "\\["), "]", "\\]");
 		system(fmt::format("screencapture -wxo -tpng {}", filePath).c_str());
 		std::string message = !Loader::get()->isModInstalled("ninxout.prntscrn") ? "Pro tip: Hold the SHIFT key while clicking the screenshot shortcut button to send screenshots directly to your clipboard,</c> <co>instead of saving the screenshot to the config folder!</c><cy>" : "Y'know, you could've done that exact same thing with ninXout's PRNTSCRN mod...";
-		geode::createQuickPopup("WarbledCompletions", fmt::format("Screenshot complete! Would you like to open the location of your screenshot?\n\n<cy>({})</c>", message), "No", "Yes", [=](auto, bool configDir) {
+		geode::createQuickPopup("WarbledCompletions", fmt::format("Screenshot complete! Would you like to open the location of your screenshot?\n\n<cy>({})</c>", message), "No", "Yes", [this](auto, bool configDir) {
 			if (!configDir) return;
 			geode::utils::file::openFolder(configDirPath);
 		});
@@ -268,7 +268,7 @@ class $modify(SharingEndLevelLayer, EndLevelLayer) {
 		image->release();
 
 		std::string message = !Loader::get()->isModInstalled("ninxout.prntscrn") ? "Copying a screenshot to your clipboard for copy-pasting isn't as easy as it sounds." : "Y'know, you could've done that exact same thing with ninXout's PRNTSCRN mod...";
-		geode::createQuickPopup("WarbledCompletions", fmt::format("Screenshot complete! Would you like to open the location of your screenshot?\n\n<cy>({})</c>", message), "No", "Yes", [=](auto, bool configDir) {
+		geode::createQuickPopup("WarbledCompletions", fmt::format("Screenshot complete! Would you like to open the location of your screenshot?\n\n<cy>({})</c>", message), "No", "Yes", [this](auto, bool configDir) {
 			if (!configDir) return;
 			geode::utils::file::openFolder(configDirPath);
 		});
@@ -314,6 +314,6 @@ class $modify(SharingEndLevelLayer, EndLevelLayer) {
 		addDiscord(menu);
 		addWeb(menu);
 		addScreenshot(menu);
-		if (menu->getChildrenCount() < 1) static_cast<CCNode*>(menu)->removeMeAndCleanUp();
+		if (menu->getChildrenCount() < 1) menu->removeMeAndCleanup();
 	}
 };
