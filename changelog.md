@@ -1,2 +1,3 @@
-# 1.0.0
-- initial release
+# WarbledCompletions Changelog
+## 1.0.0
+- Initial release (on GitHub).
