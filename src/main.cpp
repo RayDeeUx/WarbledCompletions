@@ -95,11 +95,11 @@ class $modify(SharingEndLevelLayer, EndLevelLayer) {
 	}
 	static void showDiscordFailurePopup() {
 		geode::utils::web::openLinkInBrowser("https://discord.com/app");
-		return FLAlertLayer::create("WarbledCompletions Error!", "You did not provide a valid app to open <cb>Discord</c>.\n\n<cy>WarbledCompletions is opening Discord in your web browser instead.</c>", "Oof...")->show();
+		return FLAlertLayer::create("WarbledCompletions Error!", "You either failed to provide a valid app to open <cb>Discord</c>, or your <cb>Discord</c> app was updated recently.\n\n<cy>WarbledCompletions is opening Discord in your web browser instead.</c>", "Oof...")->show();
 	}
 	static void openDiscordHopefully() {
 		if (!getBool("enabled")) return;
-		if (getPath("discordApp").string().empty()) return showDiscordFailurePopup();
+		if (getPath("discordApp").string().empty() || !std::filesystem::exists(getPath("discordApp"))) return showDiscordFailurePopup();
 		std::filesystem::path discordPath = getPath("discordApp");
 		std::string discordPathFixed, command;
 		#ifdef GEODE_IS_WINDOWS

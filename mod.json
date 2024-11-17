@@ -7,7 +7,7 @@
 	},
 	"id": "raydeeux_limegradient.warbledcompletions",
 	"name": "WarbledCompletions",
-	"version": "v1.0.0",
+	"version": "v1.0.1",
 	"developers": ["RayDeeUx", "LimeGradient"],
 	"description": "Share your level completions with one click!",
 	"repository": "https://github.com/RayDeeUx/WarbledCompletions",
