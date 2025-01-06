@@ -1,5 +1,8 @@
 # WarbledCompletions Changelog
-## 1.0.1
+## v1.0.2
+- Index compliance. (8000 slot hook priority system < 4 billion slot hook priority system)
+    - Some features might break.
+## v1.0.1
 - Fix potential crashes.
-## 1.0.0
+## v1.0.0
 - Initial release (on GitHub).

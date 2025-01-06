@@ -1,5 +1,5 @@
 {
-	"geode": "4.0.0-beta.1",
+	"geode": "4.0.1",
 	"gd": {
 		"win": "2.2074",
 		"mac": "2.2074",
@@ -7,7 +7,7 @@
 	},
 	"id": "raydeeux_limegradient.warbledcompletions",
 	"name": "WarbledCompletions",
-	"version": "v1.0.1",
+	"version": "v1.0.2",
 	"developers": ["RayDeeUx", "LimeGradient"],
 	"description": "Share your level completions with one click!",
 	"repository": "https://github.com/RayDeeUx/WarbledCompletions",
