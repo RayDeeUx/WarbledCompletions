@@ -1,7 +1,7 @@
 #include <Geode/modify/EndLevelLayer.hpp>
 #include <Geode/utils/web.hpp>
 
-#define PREFERRED_HOOK_PRIO (-4000)
+#define PREFERRED_HOOK_PRIO (-3999)
 
 using namespace geode::prelude;
 
