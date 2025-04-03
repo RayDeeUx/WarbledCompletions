@@ -1,14 +1,18 @@
 {
-	"geode": "4.0.1",
+	"geode": "4.3.1",
 	"gd": {
 		"win": "2.2074",
 		"mac": "2.2074",
-		"android": "2.2074"
+		"android": "2.2074",
+		"ios": "2.2074"
 	},
 	"id": "raydeeux_limegradient.warbledcompletions",
 	"name": "WarbledCompletions",
-	"version": "v1.0.2",
-	"developers": ["RayDeeUx", "LimeGradient"],
+	"version": "v1.0.3",
+	"developers": [
+		"RayDeeUx",
+		"LimeGradient"
+	],
 	"description": "Share your level completions with one click!",
 	"repository": "https://github.com/RayDeeUx/WarbledCompletions",
 	"settings": {
@@ -82,7 +86,10 @@
 			"description": "Enable sharing your completion to <cb>Discord</c>.",
 			"type": "bool",
 			"default": true,
-			"platforms": [ "win", "mac" ]
+			"platforms": [
+				"win",
+				"mac"
+			]
 		},
 		"discordApp": {
 			"name": "Discord App to Open",
@@ -93,12 +100,18 @@
 				"dialog": "open",
 				"filters": [
 					{
-						"files": [ "*.exe", "*.app" ],
+						"files": [
+							"*.exe",
+							"*.app"
+						],
 						"description": "DISCORD/VESKTOP, PLEASE"
 					}
 				]
 			},
-			"platforms": [ "win", "mac" ],
+			"platforms": [
+				"win",
+				"mac"
+			],
 			"match": "^.*(?:Discord ?(?:PTB|Canary)?|Vesktop)\\.(?:exe|app)$|^$"
 		},
 		"customURL": {
