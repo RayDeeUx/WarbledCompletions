@@ -216,6 +216,9 @@ class $modify(SharingEndLevelLayer, EndLevelLayer) {
 		});
 	}
 	void delayedConfigScreenshot() {
+		#ifdef GEODE_IS_IOS
+		return;
+		#else
 		// escape chars or else terminal cmd fails
 		std::string filePath = m_fields->filePath;
 		filePath = utils::string::replace(utils::string::replace(utils::string::replace(utils::string::replace(utils::string::replace(filePath, " ", "\\ "), "(", "\\("), ")", "\\)"), "[", "\\["), "]", "\\]");
@@ -226,11 +229,16 @@ class $modify(SharingEndLevelLayer, EndLevelLayer) {
 			geode::utils::file::openFolder(configDirPath);
 		});
 		this->getChildByIDRecursive("look-i-did-it-menu"_spr)->setVisible(true);
+		#endif
 	}
 	void delayedClipboardScreenshot() {
+		#ifdef GEODE_IS_IOS
+		return;
+		#else
 		system("screencapture -wxoc -tpng");
 		FLAlertLayer::create("WarbledCompletions", "Screenshot complete! It should be on your clipboard now.", "OK")->show();
 		this->getChildByIDRecursive("look-i-did-it-menu"_spr)->setVisible(true);
+		#endif
 	}
 	// adapted from code by TheSillyDoggo (she/her): https://discord.com/channels/911701438269386882/911702535373475870/1291198134013394946
 	// original code: https://raw.githubusercontent.com/TheSillyDoggo/Screenshot-Mod/main/src/main.cpp
