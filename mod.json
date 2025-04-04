@@ -25,7 +25,8 @@
 		"screenshot": {
 			"name": "Screenshot Button",
 			"type": "bool",
-			"default": true
+			"default": true,
+			"platforms": ["windows", "mac", "android"]
 		},
 		"skipConfirmation": {
 			"name": "Skip Confirmation Prompts",

@@ -116,28 +116,31 @@ class $modify(SharingEndLevelLayer, EndLevelLayer) {
 	}
 	void addScreenshot(CCMenu *menu) {
 		if (isDisabled("screenshot")) return;
-		auto screenshotButton = CCMenuItemSpriteExtra::create(CCSprite::createWithSpriteFrameName("screenshot.png"_spr), this, menu_selector(SharingEndLevelLayer::onScreenshot));
+		#ifdef GEODE_IS_IOS
+		return;
+		#endif
+		const auto screenshotButton = CCMenuItemSpriteExtra::create(CCSprite::createWithSpriteFrameName("screenshot.png"_spr), this, menu_selector(SharingEndLevelLayer::onScreenshot));
 		screenshotButton->setID("screenshot-button"_spr);
 		menu->addChild(screenshotButton);
 		menu->updateLayout();
 	}
 	void addWeb(CCMenu *menu) {
 		if (getString("customURL").empty() || !getBool("enabled")) return;
-		auto webButton = CCMenuItemSpriteExtra::create(CCSprite::createWithSpriteFrameName("web.png"_spr), this, menu_selector(SharingEndLevelLayer::onWeb));
+		const auto webButton = CCMenuItemSpriteExtra::create(CCSprite::createWithSpriteFrameName("web.png"_spr), this, menu_selector(SharingEndLevelLayer::onWeb));
 		webButton->setID("web-button"_spr);
 		menu->addChild(webButton);
 		menu->updateLayout();
 	}
 	void addDiscord(CCMenu *menu) {
 		if (isDisabled("discord") || getPath("discordApp").empty()) return;
-		auto discordButton = CCMenuItemSpriteExtra::create(CCSprite::createWithSpriteFrameName("gj_discordIcon_001.png"), this, menu_selector(SharingEndLevelLayer::onOpenTheDiscordAppOrSomething));
+		const auto discordButton = CCMenuItemSpriteExtra::create(CCSprite::createWithSpriteFrameName("gj_discordIcon_001.png"), this, menu_selector(SharingEndLevelLayer::onOpenTheDiscordAppOrSomething));
 		discordButton->setID("discord-button"_spr);
 		menu->addChild(discordButton);
 		menu->updateLayout();
 	}
 	void addMastodon(CCMenu *menu) {
 		if (isDisabled("mastodon")) return;
-		auto mastodonButton = CCMenuItemSpriteExtra::create(CCSprite::createWithSpriteFrameName("mastodon.png"_spr), this, menu_selector(SharingEndLevelLayer::onMastodon));
+		const auto mastodonButton = CCMenuItemSpriteExtra::create(CCSprite::createWithSpriteFrameName("mastodon.png"_spr), this, menu_selector(SharingEndLevelLayer::onMastodon));
 		mastodonButton->setID("mastodon-button"_spr);
 		menu->addChild(mastodonButton);
 		menu->updateLayout();
@@ -149,21 +152,21 @@ class $modify(SharingEndLevelLayer, EndLevelLayer) {
 		if (blueskyStyle == "Media Kit") blueskySprite = CCSprite::createWithSpriteFrameName("bluesky.png"_spr);
 		else if (blueskyStyle == "Alphalaneous") blueskySprite = CCSprite::createWithSpriteFrameName("blueskyAlpha.png"_spr);
 		else if (blueskyStyle == "Colon") blueskySprite = CCSprite::createWithSpriteFrameName("blueskyColon.png"_spr);
-		auto blueskyButton = CCMenuItemSpriteExtra::create(blueskySprite, this, menu_selector(SharingEndLevelLayer::onBluesky));
+		const auto blueskyButton = CCMenuItemSpriteExtra::create(blueskySprite, this, menu_selector(SharingEndLevelLayer::onBluesky));
 		blueskyButton->setID("bluesky-button"_spr);
 		menu->addChild(blueskyButton);
 		menu->updateLayout();
 	}
 	void addRedditIfNotRobTopLevel(CCMenu *menu) {
 		if (isDisabled("reddit") || m_playLayer->m_level->m_levelType == GJLevelType::Local) return;
-		auto redditButton = CCMenuItemSpriteExtra::create(CCSprite::createWithSpriteFrameName("gj_rdIcon_001.png"), this, menu_selector(SharingEndLevelLayer::onReddit));
+		const auto redditButton = CCMenuItemSpriteExtra::create(CCSprite::createWithSpriteFrameName("gj_rdIcon_001.png"), this, menu_selector(SharingEndLevelLayer::onReddit));
 		redditButton->setID("reddit-button"_spr);
 		menu->addChild(redditButton);
 		menu->updateLayout();
 	}
 	void addTwitter(CCMenu *menu) {
 		if (isDisabled("twitter")) return;
-		auto tweetButton = CCMenuItemSpriteExtra::create(CCSprite::createWithSpriteFrameName("gj_twIcon_001.png"), this, menu_selector(SharingEndLevelLayer::onTweet));
+		const auto tweetButton = CCMenuItemSpriteExtra::create(CCSprite::createWithSpriteFrameName("gj_twIcon_001.png"), this, menu_selector(SharingEndLevelLayer::onTweet));
 		tweetButton->setID("tweet-button"_spr);
 		menu->addChild(tweetButton);
 		menu->updateLayout();
@@ -196,7 +199,7 @@ class $modify(SharingEndLevelLayer, EndLevelLayer) {
 			if (reddit) shareCompletionTo("reddit");
 		});
 	}
-	void onOpenTheDiscordAppOrSomething(CCObject*) {
+	void onOpenTheDiscordAppOrSomething(CCObject*) const {
 		if (isDisabled("discord")) return;
 		if (getBool("skipConfirmation")) return openDiscordHopefully();
 		geode::createQuickPopup("WarbledCompletions", "Would you like to open <cb>Discord</c> to share your completion?\n\n<cy>WarbledCompletions is not responsible for any damages (tangible or otherwise) if Discord's \"Streamer Mode\" is not active.</c>", "No", "Yes", [this](auto, bool discord) {
@@ -204,7 +207,7 @@ class $modify(SharingEndLevelLayer, EndLevelLayer) {
 			return openDiscordHopefully();
 		});
 	}
-	void onWeb(CCObject*) {
+	void onWeb(CCObject*) const {
 		if (getString("customURL").empty() || !getBool("enabled")) return;
 		if (getBool("skipConfirmation")) return geode::utils::web::openLinkInBrowser(fmt::format("https://{}", getString("customURL")));
 		geode::createQuickPopup("WarbledCompletions", fmt::format("Would you like to share your completion <cb>elsewhere</c>?\n\n<cy>If you choose this option, you are responsible for the contents of the web page you chose:</c>\n\n<cl>{}</c>", getString("customURL")), "No", "Yes", [this](auto, bool web) {
@@ -212,7 +215,7 @@ class $modify(SharingEndLevelLayer, EndLevelLayer) {
 			geode::utils::web::openLinkInBrowser(fmt::format("https://{}", getString("customURL")));
 		});
 	}
-	void delayedClipboardScreenshot() {
+	void delayedConfigScreenshot() {
 		// escape chars or else terminal cmd fails
 		std::string filePath = m_fields->filePath;
 		filePath = utils::string::replace(utils::string::replace(utils::string::replace(utils::string::replace(utils::string::replace(filePath, " ", "\\ "), "(", "\\("), ")", "\\)"), "[", "\\["), "]", "\\]");
@@ -224,7 +227,7 @@ class $modify(SharingEndLevelLayer, EndLevelLayer) {
 		});
 		this->getChildByIDRecursive("look-i-did-it-menu"_spr)->setVisible(true);
 	}
-	void delayedConfigScreenshot() {
+	void delayedClipboardScreenshot() {
 		system("screencapture -wxoc -tpng");
 		FLAlertLayer::create("WarbledCompletions", "Screenshot complete! It should be on your clipboard now.", "OK")->show();
 		this->getChildByIDRecursive("look-i-did-it-menu"_spr)->setVisible(true);
@@ -233,6 +236,9 @@ class $modify(SharingEndLevelLayer, EndLevelLayer) {
 	// original code: https://raw.githubusercontent.com/TheSillyDoggo/Screenshot-Mod/main/src/main.cpp
 	void onScreenshot(CCObject*) {
 		if (isDisabled("screenshot")) return;
+		#ifdef GEODE_IS_IOS
+		return FLAlertLayer::create("Hey there!", "iOS is a rather restrictive platform. There's no easy way to automate screenshots for now (or ever, really). Please use your device's button shortcuts instead.", "I Understand")->show();
+		#endif
 		if (!m_playLayer || !m_playLayer->m_level) return showScreenshotFailurePopup();
 		const auto &level = m_playLayer->m_level;
 		std::string levelID = level->m_levelID.value() == 0 ? "Custom level" : std::to_string(level->m_levelID.value());
@@ -244,7 +250,7 @@ class $modify(SharingEndLevelLayer, EndLevelLayer) {
 			levelID,
 			std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count()
 		);
-		#ifndef __APPLE__
+		#ifndef GEODE_IS_MACOS
 		CCScene* scene = CCDirector::sharedDirector()->getRunningScene();
 		int width = static_cast<int>(scene->getContentWidth());
 		int height = static_cast<int>(scene->getContentHeight());
@@ -275,7 +281,7 @@ class $modify(SharingEndLevelLayer, EndLevelLayer) {
 		#else
 		// run macos terminal commands
 		/*
-		from justin:
+		from hiimjasmine00:
 		@ery • 埃里曼索斯 i found the function [address on macOS] but there is one problem
 
 		***there is zero functionality for it***
@@ -283,10 +289,10 @@ class $modify(SharingEndLevelLayer, EndLevelLayer) {
 		*/
 		if (CCKeyboardDispatcher::get()->getShiftKeyPressed()) {
 			this->getChildByIDRecursive("look-i-did-it-menu"_spr)->setVisible(false);
-			this->scheduleOnce(schedule_selector(SharingEndLevelLayer::delayedConfigScreenshot), 0.017f); // 1.f / 60.f ==> 0.016666666666666666666666
+			this->scheduleOnce(schedule_selector(SharingEndLevelLayer::delayedClipboardScreenshot), 0.017f); // 1.f / 60.f ==> 0.016666666666666666666666
 		} else {
 			this->getChildByIDRecursive("look-i-did-it-menu"_spr)->setVisible(false);
-			this->scheduleOnce(schedule_selector(SharingEndLevelLayer::delayedClipboardScreenshot), 0.017f);
+			this->scheduleOnce(schedule_selector(SharingEndLevelLayer::delayedConfigScreenshot), 0.017f);
 		}
 		#endif
 	}
@@ -313,7 +319,9 @@ class $modify(SharingEndLevelLayer, EndLevelLayer) {
 		addMastodon(menu);
 		addDiscord(menu);
 		addWeb(menu);
+		#ifndef GEODE_IS_IOS
 		addScreenshot(menu);
+		#endif
 		if (menu->getChildrenCount() < 1) menu->removeMeAndCleanup();
 	}
 };
