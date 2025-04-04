@@ -199,7 +199,7 @@ class $modify(SharingEndLevelLayer, EndLevelLayer) {
 			if (reddit) shareCompletionTo("reddit");
 		});
 	}
-	void onOpenTheDiscordAppOrSomething(CCObject*) const {
+	void onOpenTheDiscordAppOrSomething(CCObject*) {
 		if (isDisabled("discord")) return;
 		if (getBool("skipConfirmation")) return openDiscordHopefully();
 		geode::createQuickPopup("WarbledCompletions", "Would you like to open <cb>Discord</c> to share your completion?\n\n<cy>WarbledCompletions is not responsible for any damages (tangible or otherwise) if Discord's \"Streamer Mode\" is not active.</c>", "No", "Yes", [this](auto, bool discord) {
@@ -207,7 +207,7 @@ class $modify(SharingEndLevelLayer, EndLevelLayer) {
 			return openDiscordHopefully();
 		});
 	}
-	void onWeb(CCObject*) const {
+	void onWeb(CCObject*) {
 		if (getString("customURL").empty() || !getBool("enabled")) return;
 		if (getBool("skipConfirmation")) return geode::utils::web::openLinkInBrowser(fmt::format("https://{}", getString("customURL")));
 		geode::createQuickPopup("WarbledCompletions", fmt::format("Would you like to share your completion <cb>elsewhere</c>?\n\n<cy>If you choose this option, you are responsible for the contents of the web page you chose:</c>\n\n<cl>{}</c>", getString("customURL")), "No", "Yes", [this](auto, bool web) {
