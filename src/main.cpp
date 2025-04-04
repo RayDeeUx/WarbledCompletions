@@ -100,11 +100,12 @@ class $modify(SharingEndLevelLayer, EndLevelLayer) {
 	static void openDiscordHopefully() {
 		#ifdef GEODE_IS_MOBILE
 		return;
-		#endif
+		#else
 		if (!getBool("enabled")) return;
 		if (getPath("discordApp").string().empty() || !std::filesystem::exists(getPath("discordApp"))) return showDiscordFailurePopup();
 		std::filesystem::path discordPath = getPath("discordApp");
 		std::string discordPathFixed, command;
+		#endif
 		#ifdef GEODE_IS_WINDOWS
 		discordPathFixed = geode::utils::string::wideToUtf8(discordPath);
 		if (!utils::string::endsWith(discordPathFixed, ".exe")) return showDiscordFailurePopup();
@@ -114,14 +115,16 @@ class $modify(SharingEndLevelLayer, EndLevelLayer) {
 		if (!utils::string::endsWith(discordPathFixed, ".app")) return showDiscordFailurePopup();
 		command = fmt::format("open {}", discordPathFixed);
 		#endif
+		#ifdef GEODE_IS_DESKTOP
 		if (!utils::string::contains(discordPathFixed, "Discord.") && !utils::string::contains(discordPathFixed, "DiscordPTB.") && !utils::string::contains(discordPathFixed, "DiscordCanary.") && !utils::string::contains(discordPathFixed, "Vesktop")) return showDiscordFailurePopup();
 		system(command.c_str());
+		#endif
 	}
 	void addScreenshot(CCMenu *menu) {
-		if (isDisabled("screenshot")) return;
 		#ifdef GEODE_IS_IOS
 		return;
 		#endif
+		if (isDisabled("screenshot")) return;
 		const auto screenshotButton = CCMenuItemSpriteExtra::create(CCSprite::createWithSpriteFrameName("screenshot.png"_spr), this, menu_selector(SharingEndLevelLayer::onScreenshot));
 		screenshotButton->setID("screenshot-button"_spr);
 		menu->addChild(screenshotButton);
@@ -225,7 +228,7 @@ class $modify(SharingEndLevelLayer, EndLevelLayer) {
 		});
 	}
 	void delayedConfigScreenshot() {
-		#ifdef GEODE_IS_IOS
+		#ifndef GEODE_IS_MACOS
 		return;
 		#else
 		// escape chars or else terminal cmd fails
@@ -241,7 +244,7 @@ class $modify(SharingEndLevelLayer, EndLevelLayer) {
 		#endif
 	}
 	void delayedClipboardScreenshot() {
-		#ifdef GEODE_IS_IOS
+		#ifndef GEODE_IS_MACOS
 		return;
 		#else
 		system("screencapture -wxoc -tpng");
@@ -252,10 +255,10 @@ class $modify(SharingEndLevelLayer, EndLevelLayer) {
 	// adapted from code by TheSillyDoggo (she/her): https://discord.com/channels/911701438269386882/911702535373475870/1291198134013394946
 	// original code: https://raw.githubusercontent.com/TheSillyDoggo/Screenshot-Mod/main/src/main.cpp
 	void onScreenshot(CCObject*) {
-		if (isDisabled("screenshot")) return;
 		#ifdef GEODE_IS_IOS
 		return FLAlertLayer::create("Hey there!", "iOS is a rather restrictive platform. There's no easy way to automate screenshots for now (or ever, really). Please use your device's button shortcuts instead.", "I Understand")->show();
-		#endif
+		#else
+		if (isDisabled("screenshot")) return;
 		if (!m_playLayer || !m_playLayer->m_level) return showScreenshotFailurePopup();
 		const auto &level = m_playLayer->m_level;
 		std::string levelID = level->m_levelID.value() == 0 ? "Custom level" : std::to_string(level->m_levelID.value());
@@ -267,7 +270,8 @@ class $modify(SharingEndLevelLayer, EndLevelLayer) {
 			levelID,
 			std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count()
 		);
-		#ifndef GEODE_IS_MACOS
+		#endif
+		#if defined(GEODE_IS_WINDOWS) || defined(GEODE_IS_ANDROID)
 		CCScene* scene = CCDirector::sharedDirector()->getRunningScene();
 		int width = static_cast<int>(scene->getContentWidth());
 		int height = static_cast<int>(scene->getContentHeight());
@@ -296,7 +300,7 @@ class $modify(SharingEndLevelLayer, EndLevelLayer) {
 			geode::utils::file::openFolder(configDirPath);
 		});
 		#endif
-		#ifndef GEODE_IS_IOS
+		#ifdef GEODE_IS_MACOS
 		// run macos terminal commands
 		/*
 		from hiimjasmine00:
