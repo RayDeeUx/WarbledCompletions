@@ -278,7 +278,8 @@ class $modify(SharingEndLevelLayer, EndLevelLayer) {
 			if (!configDir) return;
 			geode::utils::file::openFolder(configDirPath);
 		});
-		#else
+		#endif
+		#ifndef GEODE_IS_IOS
 		// run macos terminal commands
 		/*
 		from hiimjasmine00:
