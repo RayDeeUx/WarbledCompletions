@@ -98,6 +98,9 @@ class $modify(SharingEndLevelLayer, EndLevelLayer) {
 		return FLAlertLayer::create("WarbledCompletions Error!", "You either failed to provide a valid app to open <cb>Discord</c>, or your <cb>Discord</c> app was updated recently.\n\n<cy>WarbledCompletions is opening Discord in your web browser instead.</c>", "Oof...")->show();
 	}
 	static void openDiscordHopefully() {
+		#ifdef GEODE_IS_MOBILE
+		return;
+		#endif
 		if (!getBool("enabled")) return;
 		if (getPath("discordApp").string().empty() || !std::filesystem::exists(getPath("discordApp"))) return showDiscordFailurePopup();
 		std::filesystem::path discordPath = getPath("discordApp");
@@ -132,6 +135,9 @@ class $modify(SharingEndLevelLayer, EndLevelLayer) {
 		menu->updateLayout();
 	}
 	void addDiscord(CCMenu *menu) {
+		#ifdef GEODE_IS_MOBILE
+		return;
+		#endif
 		if (isDisabled("discord") || getPath("discordApp").empty()) return;
 		const auto discordButton = CCMenuItemSpriteExtra::create(CCSprite::createWithSpriteFrameName("gj_discordIcon_001.png"), this, menu_selector(SharingEndLevelLayer::onOpenTheDiscordAppOrSomething));
 		discordButton->setID("discord-button"_spr);
@@ -200,6 +206,9 @@ class $modify(SharingEndLevelLayer, EndLevelLayer) {
 		});
 	}
 	void onOpenTheDiscordAppOrSomething(CCObject*) {
+		#ifdef GEODE_IS_MOBILE
+		return;
+		#endif
 		if (isDisabled("discord")) return;
 		if (getBool("skipConfirmation")) return openDiscordHopefully();
 		geode::createQuickPopup("WarbledCompletions", "Would you like to open <cb>Discord</c> to share your completion?\n\n<cy>WarbledCompletions is not responsible for any damages (tangible or otherwise) if Discord's \"Streamer Mode\" is not active.</c>", "No", "Yes", [this](auto, bool discord) {
