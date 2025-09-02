@@ -1,10 +1,10 @@
 {
-	"geode": "4.3.1",
+	"geode": "4.7.0",
 	"gd": {
 		"win": "2.2074",
 		"mac": "2.2074",
-		"android": "2.2074",
-		"ios": "2.2074"
+		"ios": "2.2074",
+		"android": "2.2074"
 	},
 	"id": "raydeeux_limegradient.warbledcompletions",
 	"name": "WarbledCompletions",
@@ -123,25 +123,20 @@
 			"match": "^(?![\\S]+:\\/+)(?:www\\.)?[\\S]+\\.[\\S]+$|^$"
 		}
 	},
-	"dependencies": [
-		{
-			"id": "geode.node-ids",
-			"version": ">=1.14.0",
-			"importance": "required"
-		}
-	],
-	"incompatibilities": [
-		{
-			"id": "raydeeux_limegradient.tweetyourcompletions",
-			"version": "*",
+	"dependencies": {
+		"geode.node-ids": ">=1.14.0",
+		"ninxout.prntscrn": ">=1.0.0"
+	},
+	"incompatibilities": {
+		"raydeeux_limegradient.tweetyourcompletions": {
+			"version": ">=1.0.0",
 			"importance": "superseded"
 		},
-		{
-			"id": "limegradient.lookididit",
-			"version": "*",
+		"limegradient.lookididit": {
+			"version": ">=1.0.0",
 			"importance": "superseded"
 		}
-	],
+	},
 	"resources": {
 		"spritesheets": {
 			"OtherSocialMediaButtons": [

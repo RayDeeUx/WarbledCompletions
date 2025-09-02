@@ -1,3 +1,4 @@
+#include <ninxout.prntscrn/include/api.hpp>
 #include <Geode/modify/EndLevelLayer.hpp>
 #include <Geode/utils/web.hpp>
 
@@ -121,9 +122,6 @@ class $modify(SharingEndLevelLayer, EndLevelLayer) {
 		#endif
 	}
 	void addScreenshot(CCMenu *menu) {
-		#ifdef GEODE_IS_IOS
-		return;
-		#endif
 		if (isDisabled("screenshot")) return;
 		const auto screenshotButton = CCMenuItemSpriteExtra::create(CCSprite::createWithSpriteFrameName("screenshot.png"_spr), this, menu_selector(SharingEndLevelLayer::onScreenshot));
 		screenshotButton->setID("screenshot-button"_spr);
@@ -227,96 +225,13 @@ class $modify(SharingEndLevelLayer, EndLevelLayer) {
 			geode::utils::web::openLinkInBrowser(fmt::format("https://{}", getString("customURL")));
 		});
 	}
-	void delayedConfigScreenshot() {
-		#ifndef GEODE_IS_MACOS
-		return;
-		#else
-		// escape chars or else terminal cmd fails
-		std::string filePath = m_fields->filePath;
-		filePath = utils::string::replace(utils::string::replace(utils::string::replace(utils::string::replace(utils::string::replace(filePath, " ", "\\ "), "(", "\\("), ")", "\\)"), "[", "\\["), "]", "\\]");
-		system(fmt::format("screencapture -wxo -tpng {}", filePath).c_str());
-		std::string message = !Loader::get()->isModInstalled("ninxout.prntscrn") ? "Pro tip: Hold the SHIFT key while clicking the screenshot shortcut button to send screenshots directly to your clipboard,</c> <co>instead of saving the screenshot to the config folder!</c><cy>" : "Y'know, you could've done that exact same thing with ninXout's PRNTSCRN mod...";
-		geode::createQuickPopup("WarbledCompletions", fmt::format("Screenshot complete! Would you like to open the location of your screenshot?\n\n<cy>({})</c>", message), "No", "Yes", [this](auto, bool configDir) {
-			if (!configDir) return;
-			geode::utils::file::openFolder(configDirPath);
-		});
-		this->getChildByIDRecursive("look-i-did-it-menu"_spr)->setVisible(true);
-		#endif
-	}
-	void delayedClipboardScreenshot() {
-		#ifndef GEODE_IS_MACOS
-		return;
-		#else
-		system("screencapture -wxoc -tpng");
-		FLAlertLayer::create("WarbledCompletions", "Screenshot complete! It should be on your clipboard now.", "OK")->show();
-		this->getChildByIDRecursive("look-i-did-it-menu"_spr)->setVisible(true);
-		#endif
-	}
-	// adapted from code by TheSillyDoggo (she/her): https://discord.com/channels/911701438269386882/911702535373475870/1291198134013394946
-	// original code: https://raw.githubusercontent.com/TheSillyDoggo/Screenshot-Mod/main/src/main.cpp
 	void onScreenshot(CCObject*) {
-		#ifdef GEODE_IS_IOS
-		return FLAlertLayer::create("Hey there!", "iOS is a rather restrictive platform. There's no easy way to automate screenshots for now (or ever, really). Please use your device's button shortcuts instead.", "I Understand")->show();
-		#else
 		if (isDisabled("screenshot")) return;
 		if (!m_playLayer || !m_playLayer->m_level) return showScreenshotFailurePopup();
-		const auto &level = m_playLayer->m_level;
-		std::string levelID = level->m_levelID.value() == 0 ? "Custom level" : std::to_string(level->m_levelID.value());
-		m_fields->filePath = fmt::format(
-			"{}/{} by {} [{}] ({}).png",
-			configDir,
-			std::string(level->m_levelName),
-			std::string(level->m_creatorName),
-			levelID,
-			std::chrono::duration_cast<std::chrono::seconds>(std::chrono::system_clock::now().time_since_epoch()).count()
-		);
-		#endif
-		#if defined(GEODE_IS_WINDOWS) || defined(GEODE_IS_ANDROID)
-		CCScene* scene = CCDirector::sharedDirector()->getRunningScene();
-		int width = static_cast<int>(scene->getContentWidth());
-		int height = static_cast<int>(scene->getContentHeight());
-		CCRenderTexture* renderTexture = CCRenderTexture::create(width, height);
-
-		// Send data to renderTexture for captured image
 		this->getChildByIDRecursive("look-i-did-it-menu"_spr)->setVisible(false);
-		renderTexture->begin();
-		scene->visit();
-		renderTexture->end();
+		auto screenshotResult = PRNTSCRN::screenshotNodeAdvanced(CCScene::get(), {}, {});
+		if (screenshotResult.err()) return showScreenshotFailurePopup();
 		this->getChildByIDRecursive("look-i-did-it-menu"_spr)->setVisible(true);
-
-		// Get the captured image
-		CCImage* image = renderTexture->newCCImage();
-
-		// Save the image to file
-		if (!image) return showScreenshotFailurePopup();
-		image->saveToFile(m_fields->filePath.c_str());
-
-		// Release image
-		image->release();
-
-		std::string message = !Loader::get()->isModInstalled("ninxout.prntscrn") ? "Copying a screenshot to your clipboard for copy-pasting isn't as easy as it sounds." : "Y'know, you could've done that exact same thing with ninXout's PRNTSCRN mod...";
-		geode::createQuickPopup("WarbledCompletions", fmt::format("Screenshot complete! Would you like to open the location of your screenshot?\n\n<cy>({})</c>", message), "No", "Yes", [this](auto, bool configDir) {
-			if (!configDir) return;
-			geode::utils::file::openFolder(configDirPath);
-		});
-		#endif
-		#ifdef GEODE_IS_MACOS
-		// run macos terminal commands
-		/*
-		from hiimjasmine00:
-		@ery • 埃里曼索斯 i found the function [address on macOS] but there is one problem
-
-		***there is zero functionality for it***
-		https://discord.com/channels/911701438269386882/911702535373475870/1305405118354690139
-		*/
-		if (CCKeyboardDispatcher::get()->getShiftKeyPressed()) {
-			this->getChildByIDRecursive("look-i-did-it-menu"_spr)->setVisible(false);
-			this->scheduleOnce(schedule_selector(SharingEndLevelLayer::delayedClipboardScreenshot), 0.017f); // 1.f / 60.f ==> 0.016666666666666666666666
-		} else {
-			this->getChildByIDRecursive("look-i-did-it-menu"_spr)->setVisible(false);
-			this->scheduleOnce(schedule_selector(SharingEndLevelLayer::delayedConfigScreenshot), 0.017f);
-		}
-		#endif
 	}
 	void customSetup() {
 		EndLevelLayer::customSetup();
@@ -341,9 +256,7 @@ class $modify(SharingEndLevelLayer, EndLevelLayer) {
 		addMastodon(menu);
 		addDiscord(menu);
 		addWeb(menu);
-		#ifndef GEODE_IS_IOS
 		addScreenshot(menu);
-		#endif
 		if (menu->getChildrenCount() < 1) menu->removeMeAndCleanup();
 	}
 };
