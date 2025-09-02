@@ -228,10 +228,8 @@ class $modify(SharingEndLevelLayer, EndLevelLayer) {
 	void onScreenshot(CCObject*) {
 		if (isDisabled("screenshot")) return;
 		if (!m_playLayer || !m_playLayer->m_level) return showScreenshotFailurePopup();
-		this->getChildByIDRecursive("look-i-did-it-menu"_spr)->setVisible(false);
-		auto screenshotResult = PRNTSCRN::screenshotNodeAdvanced(CCScene::get(), {}, {});
+		auto screenshotResult = PRNTSCRN::screenshotNodeAdvanced(CCScene::get(), {this->getChildByIDRecursive("look-i-did-it-menu"_spr)}, {});
 		if (screenshotResult.err()) return showScreenshotFailurePopup();
-		this->getChildByIDRecursive("look-i-did-it-menu"_spr)->setVisible(true);
 	}
 	void customSetup() {
 		EndLevelLayer::customSetup();
