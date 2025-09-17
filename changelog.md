@@ -3,8 +3,8 @@
 - iOS devices are now able to enjoy screenshots!
 - All screenshots from this mod will now be sent to the config directory for [PRNTSCRN](mod:ninxout.prntscrn).
 ## v1.0.3
-- iPhone and iPads (and maybe iPods?) are now able to enjoy InfoLabelTweaks!
-  - However, they will need to take screenshots manually.
+- Experimental iOS support.
+  - Screenshot button not included.
 ## v1.0.2
 - Index compliance. (8000 slot hook priority system < 4 billion slot hook priority system)
     - Some features might break.
