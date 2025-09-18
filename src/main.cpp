@@ -121,21 +121,21 @@ class $modify(SharingEndLevelLayer, EndLevelLayer) {
 		system(command.c_str());
 		#endif
 	}
-	void addScreenshot(CCMenu *menu) {
+	void addScreenshot(CCMenu* menu) {
 		if (isDisabled("screenshot")) return;
 		const auto screenshotButton = CCMenuItemSpriteExtra::create(CCSprite::createWithSpriteFrameName("screenshot.png"_spr), this, menu_selector(SharingEndLevelLayer::onScreenshot));
 		screenshotButton->setID("screenshot-button"_spr);
 		menu->addChild(screenshotButton);
 		menu->updateLayout();
 	}
-	void addWeb(CCMenu *menu) {
+	void addWeb(CCMenu* menu) {
 		if (getString("customURL").empty() || !getBool("enabled")) return;
 		const auto webButton = CCMenuItemSpriteExtra::create(CCSprite::createWithSpriteFrameName("web.png"_spr), this, menu_selector(SharingEndLevelLayer::onWeb));
 		webButton->setID("web-button"_spr);
 		menu->addChild(webButton);
 		menu->updateLayout();
 	}
-	void addDiscord(CCMenu *menu) {
+	void addDiscord(CCMenu* menu) {
 		#ifdef GEODE_IS_MOBILE
 		return;
 		#endif
@@ -145,14 +145,14 @@ class $modify(SharingEndLevelLayer, EndLevelLayer) {
 		menu->addChild(discordButton);
 		menu->updateLayout();
 	}
-	void addMastodon(CCMenu *menu) {
+	void addMastodon(CCMenu* menu) {
 		if (isDisabled("mastodon")) return;
 		const auto mastodonButton = CCMenuItemSpriteExtra::create(CCSprite::createWithSpriteFrameName("mastodon.png"_spr), this, menu_selector(SharingEndLevelLayer::onMastodon));
 		mastodonButton->setID("mastodon-button"_spr);
 		menu->addChild(mastodonButton);
 		menu->updateLayout();
 	}
-	void addBluesky(CCMenu *menu) {
+	void addBluesky(CCMenu* menu) {
 		if (isDisabled("bluesky")) return;
 		CCSprite* blueskySprite = CCSprite::createWithSpriteFrameName("blueskyAlt.png"_spr);
 		const std::string &blueskyStyle = getString("blueskyStyle");
@@ -164,14 +164,14 @@ class $modify(SharingEndLevelLayer, EndLevelLayer) {
 		menu->addChild(blueskyButton);
 		menu->updateLayout();
 	}
-	void addRedditIfNotRobTopLevel(CCMenu *menu) {
+	void addRedditIfNotRobTopLevel(CCMenu* menu) {
 		if (isDisabled("reddit") || m_playLayer->m_level->m_levelType == GJLevelType::Local) return;
 		const auto redditButton = CCMenuItemSpriteExtra::create(CCSprite::createWithSpriteFrameName("gj_rdIcon_001.png"), this, menu_selector(SharingEndLevelLayer::onReddit));
 		redditButton->setID("reddit-button"_spr);
 		menu->addChild(redditButton);
 		menu->updateLayout();
 	}
-	void addTwitter(CCMenu *menu) {
+	void addTwitter(CCMenu* menu) {
 		if (isDisabled("twitter")) return;
 		const auto tweetButton = CCMenuItemSpriteExtra::create(CCSprite::createWithSpriteFrameName("gj_twIcon_001.png"), this, menu_selector(SharingEndLevelLayer::onTweet));
 		tweetButton->setID("tweet-button"_spr);
