@@ -125,7 +125,10 @@
 	},
 	"dependencies": {
 		"geode.node-ids": ">=1.14.0",
-		"ninxout.prntscrn": ">=1.0.0"
+		"ninxout.prntscrn": {
+			"version": ">=1.0.5",
+			"importance": "recommended"
+		}
 	},
 	"incompatibilities": {
 		"raydeeux_limegradient.tweetyourcompletions": {
