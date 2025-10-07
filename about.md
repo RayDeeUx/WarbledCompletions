@@ -15,11 +15,7 @@ Share your Geometry Dash level completions/verifications in as few clicks as pos
 
 WarbledCompletions also comes with a screenshot shortcut button in case you want to get an in-game screenshot of your level completion.
 
-- For <c-00adef>Windows</c> and <cg>Android</c> users, the mod will prompt you to open the folder containing your screenshot, because copying images to your clipboard is a lot harder to accomplish than it sounds.
-- For <c-cdcdcd>macOS</c> <c-2e88d6>Seq</c><c-f7a865>uoia</c> (or lower) users, you can hold the <c-2e88d6>SHI</c><c-f7a865>FT</c> key while pressing the screenshot shortcut button to take a screenshot that gets sent directly to your clipboard.<c>*</c>
-- For <c-9a9a9a>iOS</c> users, you're out of luck.
-
-<cy>*: For macOS users, a full game restart may be required, so don't wait until you finish an Extreme Demon to use the screenshot shortcut button. More info [here](https://web.archive.org/web/20240722142149/https://support.apple.com/guide/mac-help/control-access-screen-system-audio-recording-mchld6aa7d23/mac) and [here](https://web.archive.org/web/20240721171349/https://ss64.com/mac/screencapture.html). Everything is done on-device.</c>
+[PRNTSCRN](mod:ninxout.prntscrn) is required for this screenshot shortcut to work.
 
 Additional credits:
 - <c-0000ff>nin</c><c-00ff00>X</c><c-0000ff>out</c> for insisting that I re-use his code for saving images on macOS (even though I ended up finding other options)

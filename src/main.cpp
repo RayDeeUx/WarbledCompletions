@@ -122,7 +122,7 @@ class $modify(SharingEndLevelLayer, EndLevelLayer) {
 		#endif
 	}
 	void addScreenshot(CCMenu* menu) {
-		if (isDisabled("screenshot")) return;
+		if (isDisabled("screenshot") || !Loader::get()->isModLoaded("ninxout.prntscrn")) return;
 		const auto screenshotButton = CCMenuItemSpriteExtra::create(CCSprite::createWithSpriteFrameName("screenshot.png"_spr), this, menu_selector(SharingEndLevelLayer::onScreenshot));
 		screenshotButton->setID("screenshot-button"_spr);
 		menu->addChild(screenshotButton);
@@ -226,7 +226,7 @@ class $modify(SharingEndLevelLayer, EndLevelLayer) {
 		});
 	}
 	void onScreenshot(CCObject*) {
-		if (isDisabled("screenshot")) return;
+		if (isDisabled("screenshot") || !Loader::get()->isModLoaded("ninxout.prntscrn")) return;
 		if (!m_playLayer || !m_playLayer->m_level) return showScreenshotFailurePopup();
 		auto screenshotResult = PRNTSCRN::screenshotNodeAdvanced(CCScene::get(), {this->getChildByIDRecursive("look-i-did-it-menu"_spr)}, {});
 		if (screenshotResult.err()) showScreenshotFailurePopup();
