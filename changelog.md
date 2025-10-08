@@ -1,4 +1,6 @@
 # WarbledCompletions Changelog
+## v1.0.5
+- So apparently I called one of my own functions twice. Yikes!
 ## v1.0.4
 - Experimental iOS JIT-less support.
 - iOS devices are now able to enjoy screenshots!
