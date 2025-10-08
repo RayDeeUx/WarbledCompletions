@@ -25,7 +25,8 @@
 		"screenshot": {
 			"name": "Screenshot Button",
 			"type": "bool",
-			"default": true
+			"default": true,
+			"enable-if": "loaded:ninxout.prntscrn"
 		},
 		"skipConfirmation": {
 			"name": "Skip Confirmation Prompts",
